@@ -1,9 +1,11 @@
 import logging
 
+from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.blocking import BlockingScheduler
+
+from app.jobs.pull_data_from_github import pull_data_from_github
 from app.providers import logging_provider
-from app.jobs.demo_job import demo_job
 
 
 def create_scheduler() -> BlockingScheduler:
@@ -22,4 +24,5 @@ def register_job(scheduler):
     """
      注册调度任务
     """
-    scheduler.add_job(demo_job, 'interval', seconds=5)
+    now = datetime.now()
+    scheduler.add_job(pull_data_from_github, 'interval', seconds=3600, next_run_time=now)

@@ -1,6 +1,6 @@
 from contextvars import ContextVar
 
-from peewee import _ConnectionState, MySQLDatabase
+from peewee import _ConnectionState, PostgresqlDatabase
 from playhouse.pool import PooledMySQLDatabase
 
 from config.database import settings
@@ -26,7 +26,7 @@ async def reset_db_state():
     db._state.reset()
 
 
-db = MySQLDatabase(
+db = PostgresqlDatabase(
     settings.DATABASE,
     user=settings.USER,
     host=settings.HOST,
