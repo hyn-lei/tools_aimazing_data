@@ -69,9 +69,11 @@ class PullData:
             if not summary:
                 logging.info("出错啦")
                 continue
+
+            # print(summary)
             star = summary.get('stargazers_count', 0)
             fork = summary.get('forks_count', 0)
-            watch = summary.get('watchers_count', 0)
+            watch = summary.get('subscribers_count', 0)
             license_ = summary.get('license').get('name')
             avatar = summary.get('owner').get('avatar_url')
 
