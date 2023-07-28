@@ -14,7 +14,7 @@ def pull_data_from_github():
 
 class GitHubData:
     host = 'https://api.github.com/repos'
-    repo_path = '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'
+    repo_path = ''
     token = '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'
 
     headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
@@ -24,7 +24,9 @@ class GitHubData:
 
     def get_data(self, url):
         res = requests.get(url, headers=self.headers)
+
         if res.status_code != 200:
+            logging.warning(f'{res.status_code},{res.text}')
             return None
         return res.json()
 
