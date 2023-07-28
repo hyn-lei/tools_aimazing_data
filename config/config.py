@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     URL: str = "http://localhost"
     TIME_ZONE: str = "RPC"
+    GITHUB_TOKEN: str = ''
 
     class Config:
         env_prefix = 'APP_'

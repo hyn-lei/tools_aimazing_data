@@ -5,6 +5,7 @@ import requests
 from app.models import data_card
 from app.models.data_card import DataCard
 from app.providers.database import db
+from config.config import settings
 
 
 def pull_data_from_github():
@@ -15,7 +16,7 @@ def pull_data_from_github():
 class GitHubData:
     host = 'https://api.github.com/repos'
     repo_path = ''
-    token = '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'
+    token = settings.GITHUB_TOKEN
 
     headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
 
