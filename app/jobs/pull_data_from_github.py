@@ -15,7 +15,7 @@ def pull_data_from_github():
 class GitHubData:
     host = 'https://api.github.com/repos'
     repo_path = ''
-    token = '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'
+    token = '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'
 
     headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
 
@@ -65,6 +65,9 @@ class PullData:
             repo_url = url.replace('https://github.com', '')
             github = GitHubData(repo_url)
             summary = github.summary_data()
+            if not summary:
+                logging.info("出错啦")
+                continue
             star = summary.get('stargazers_count', 0)
             fork = summary.get('forks_count', 0)
             watch = summary.get('watchers_count', 0)
@@ -97,7 +100,7 @@ class PullData:
                                      license=license_, latest_update=latest_update,
                                      latest_version=latest_version).where(DataCard.id == id_)
 
-            print(update.sql())
+            # print(update.sql())
             result = update.execute()
             logging.info(f'update summary data end, {repo_url}, result:{result}')
 
