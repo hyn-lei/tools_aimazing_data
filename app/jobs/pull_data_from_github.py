@@ -15,7 +15,7 @@ def pull_data_from_github():
 class GitHubData:
     host = 'https://api.github.com/repos'
     repo_path = ''
-    token = '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'
+    token = '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'
 
     headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
 
