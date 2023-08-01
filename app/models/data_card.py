@@ -32,3 +32,4 @@ class DataCard(Model):
     def list_all(cls):
         query = DataCard.select().dicts()
         return list(query)
+
