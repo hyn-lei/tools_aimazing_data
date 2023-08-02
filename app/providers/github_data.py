@@ -77,6 +77,10 @@ class GitHubData:
         content = get_raw_content(url)
         if content:
             return content
+        url = f'https://raw.githubusercontent.com/{self.repo_path}/main/README_ZH-CN.md'
+        content = get_raw_content(url)
+        if content:
+            return content
 
         logging.info(f"中文版没有数据，获取英文版,repo_path={self.repo_path}")
         #
