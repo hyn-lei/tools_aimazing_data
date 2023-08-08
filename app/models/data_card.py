@@ -47,6 +47,10 @@ class DataCard(Model):
         name, full_name, avatar, summary, read_me_content, tags, star, fork, watch, license_, latest_update, \
             latest_version = data
 
+        kw = {"summary": summary, "tags": tags, "license": license_, "author_avatar": avatar,
+              "stars": star, "forks": fork, "watches": watch, "latest_update": latest_update,
+              "latest_version": latest_version}
+
         slug = full_name.replace("/", "_")
         model = DataCard.get_or_none(DataCard.title_slug == slug)
         if summarize:
@@ -56,28 +60,25 @@ class DataCard(Model):
             main_img = ai_json.get("main_image")
             sum_content = ai_json.get("summary")
             if sum_content:
-                read_me_content = sum_content
+                kw['details'] = sum_content
+            else:
+                kw['details'] = read_me_content
+
         logging.info(f'update, url,{url}')
         # update
+
         if model:
-            DataCard.update(summary=summary, tags=tags, license=license_,
-                            stars=star, forks=fork, watches=watch, latest_update=latest_update,
-                            latest_version=latest_version,
-                            details=read_me_content
-                            ).where(DataCard.title_slug == slug).execute()
+            DataCard.update(**kw).where(DataCard.title_slug == slug).execute()
             return
 
         # type=1开源工程
         logging.info(f'create, url, {url}')
-        DataCard.create(status='draft', summary=summary,
-                        tags=tags, url=url,
-                        author_avatar=avatar,
-                        license=license_,
-                        stars=star, forks=fork, watches=watch, latest_update=latest_update,
-                        latest_version=latest_version,
-                        # 未知参数，或者需要处理的
-                        details=read_me_content,
-                        type=1, sort=0,
-                        title=name, title_slug=slug,
-                        featured_image=None
-                        )
+        kw["status"] = 'draft'
+        kw['url'] = url
+        kw['type'] = 1
+        kw['sort'] = 0
+        kw['title'] = name
+        kw['title_slug'] = slug
+        kw['featured_image'] = None
+
+        DataCard.create(**kw)
