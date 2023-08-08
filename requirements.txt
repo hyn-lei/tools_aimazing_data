@@ -12,3 +12,5 @@ python-jose[cryptography]
 
 requests
 psycopg2
+
+revChatGPT
