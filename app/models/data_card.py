@@ -52,7 +52,7 @@ class DataCard(Model):
         if summarize:
             ai_data = cls.ai.summarize(read_me_content)
             logging.info(ai_data)
-            ai_json = json.loads()
+            ai_json = json.loads(ai_data)
             main_img = ai_json.get("main_image")
             sum_content = ai_json.get("summary")
             if sum_content:
