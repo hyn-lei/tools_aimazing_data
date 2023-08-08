@@ -28,7 +28,7 @@ def pull_data():
         name, full_name, avatar, summary, read_me_content, tags, star, fork, watch, \
             license_, latest_update, latest_version = data
 
-        DataCard.update_or_create(url, data, True)
+        DataCard.update_or_create(url, data, False)
         logging.info(
             f'summary data, {id_}, {url}, {avatar}, {star}, {fork}, {watch}, {license_},{latest_update},'
             f' {latest_version}')
