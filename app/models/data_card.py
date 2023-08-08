@@ -50,7 +50,9 @@ class DataCard(Model):
         slug = full_name.replace("/", "_")
         model = DataCard.get_or_none(DataCard.title_slug == slug)
         if summarize:
-            ai_json = json.loads(cls.ai.summarize(read_me_content))
+            ai_data = cls.ai.summarize(read_me_content)
+            logging.info(ai_data)
+            ai_json = json.loads()
             main_img = ai_json.get("main_image")
             sum_content = ai_json.get("summary")
             if sum_content:
