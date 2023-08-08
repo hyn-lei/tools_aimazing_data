@@ -54,11 +54,8 @@ class DataCard(Model):
         slug = full_name.replace("/", "_")
         model = DataCard.get_or_none(DataCard.title_slug == slug)
         if summarize:
-            ai_data = cls.ai.summarize(read_me_content)
-            logging.info(ai_data)
-            ai_json = json.loads(ai_data)
-            main_img = ai_json.get("main_image")
-            sum_content = ai_json.get("summary")
+            sum_content = cls.ai.summarize(read_me_content)
+            logging.info(f'ai working: {sum_content}')
             if sum_content:
                 kw['details'] = sum_content
             else:

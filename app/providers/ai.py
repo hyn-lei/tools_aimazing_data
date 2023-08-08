@@ -3,12 +3,12 @@ import os
 import openai
 from revChatGPT.V3 import Chatbot
 
-api_key = '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'
+api_key = ''
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
-system_prompt = """你的任务是阅读用户的输入，再组织输出总结，用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介（500字左右，markdown格式，中文输出不要给英文），需要包含标题、项目介绍、项目特性等，输出的格式由下面的要求：
-1. 如果碰到页面中的图片，以相对路径的方式存在，则需要添加前缀，https://raw.githubusercontent.com。
-2. 输出的内容格式：`{"main_image":"主要图片地址","summary":"文档内容总结，以 markdown 格式输出"}`"""
+system_prompt = """你的任务是阅读用户的输入，再组织输出总结，满足要求如下：
+1. 用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介（500字左右，markdown格式，中文输出不要给英文），需要包含标题、项目介绍、项目特性等。
+2. 如果用户给的数据是英文，需要先翻译成中文，再做第1点。"""
 
 
 class Ai:
@@ -23,7 +23,7 @@ class Ai:
 
     def summarize(self, content_: str):
         if not content_:
-            return '{"main_image": "", "summary": ""}'
+            return ""
         if len(content_) > self.max_tokens:
             content_ = content_[0:self.max_tokens]
         return self.chatbot.ask(content_)
@@ -219,6 +219,4 @@ bash <(curl -s https://raw.githubusercontent.com/Yidadaa/ChatGPT-Next-Web/main/s
     """
     print(len(content))
     result = Ai(api_key).summarize(content)
-    data = json.loads(result)
-    print(data.get("main_image"))
-    print(data.get("summary"))
+    print(result)
