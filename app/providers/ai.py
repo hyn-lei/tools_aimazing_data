@@ -3,36 +3,44 @@ import os
 import openai
 from revChatGPT.V3 import Chatbot
 
-api_key = ''
+api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
-system_prompt = """你的任务是阅读用户的输入，再组织输出总结，满足要求如下：
-1. 用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介，需要包含标题、项目介绍、项目特性等。
-2. 你返回的整体文字总数在500字左右，不要输出英文。
-3. 如果用户给的数据是英文，需要先翻译成中文，再做第1点。
-4. 不要输出项目的捐赠信息，捐款信息，贡献者信息。
+system_prompt = """
+你的任务是阅读用户的输入，再组织输出总结，满足要求如下：
+
+1. 如果用户给的数据是英文，需要先翻译成中文。
+2. 用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介，需要包含标题、项目介绍、项目特性等。
+3. 你返回的整体文字总数在500字左右，不要输出英文。
+4. 不要输出项目的捐赠、捐赠信息、捐款、赞助信息，贡献者、参与贡献者信息。
+5. 不要输出原始html的 img a div 标签与内容。
+6. 不要输出类似，总结内容约500字左右等你的总结信息。
 """
 
 
 class Ai:
-    api_key = ''
+    api_key = ""
     chatbot = None
     max_tokens = 1024 * 15
 
     def __init__(self, key):
         self.api_key = key
-        self.chatbot = Chatbot(api_key=self.api_key, engine='gpt-3.5-turbo-16k-0613', max_tokens=self.max_tokens,
-                               system_prompt=system_prompt)
+        self.chatbot = Chatbot(
+            api_key=self.api_key,
+            engine="gpt-3.5-turbo-16k-0613",
+            max_tokens=self.max_tokens,
+            system_prompt=system_prompt,
+        )
 
     def summarize(self, content_: str):
         if not content_:
             return ""
         if len(content_) > self.max_tokens:
-            content_ = content_[0:self.max_tokens]
+            content_ = content_[0 : self.max_tokens]
         return self.chatbot.ask(content_)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     content = """
     
     <div align="center">

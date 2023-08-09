@@ -13,7 +13,7 @@ from config.config import settings
 class DataCard(Model):
     class Meta:
         database = db
-        table_name = 'data_cards'
+        table_name = "data_cards"
 
     id = IntegerField(primary_key=True)
     status = CharField()
@@ -44,24 +44,46 @@ class DataCard(Model):
 
     @classmethod
     def update_or_create(cls, url, data, summarize: bool = False):
-        name, full_name, avatar, summary, read_me_content, tags, star, fork, watch, license_, latest_update, \
-            latest_version = data
+        (
+            name,
+            full_name,
+            avatar,
+            summary,
+            read_me_content,
+            tags,
+            star,
+            fork,
+            watch,
+            license_,
+            latest_update,
+            latest_version,
+        ) = data
 
-        kw = {"summary": summary, "tags": tags, "license": license_, "author_avatar": avatar,
-              "stars": star, "forks": fork, "watches": watch, "latest_update": latest_update,
-              "latest_version": latest_version}
+        kw = {
+            "tags": tags,
+            "license": license_,
+            "author_avatar": avatar,
+            "stars": star,
+            "forks": fork,
+            "watches": watch,
+            "latest_update": latest_update,
+            "latest_version": latest_version,
+        }
+
+        if summary:
+            kw["summary"] = summary
 
         slug = full_name.replace("/", "_")
         model = DataCard.get_or_none(DataCard.title_slug == slug)
         if summarize:
             sum_content = cls.ai.summarize(read_me_content)
-            logging.info(f'ai working: {sum_content}')
+            logging.info(f"ai working: {sum_content}")
             if sum_content:
-                kw['details'] = sum_content
+                kw["details"] = sum_content
             else:
-                kw['details'] = read_me_content
+                kw["details"] = read_me_content
 
-        logging.info(f'update, url,{url}')
+        logging.info(f"update, url,{url}")
         # update
 
         if model:
@@ -69,13 +91,13 @@ class DataCard(Model):
             return
 
         # type=1开源工程
-        logging.info(f'create, url, {url}')
-        kw["status"] = 'draft'
-        kw['url'] = url
-        kw['type'] = 1
-        kw['sort'] = 0
-        kw['title'] = name
-        kw['title_slug'] = slug
-        kw['featured_image'] = None
+        logging.info(f"create, url, {url}")
+        kw["status"] = "draft"
+        kw["url"] = url
+        kw["type"] = 1
+        kw["sort"] = 0
+        kw["title"] = name
+        kw["title_slug"] = slug
+        kw["featured_image"] = None
 
         DataCard.create(**kw)
