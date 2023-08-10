@@ -23,7 +23,6 @@ class DataCard(Model):
     featured_image = CharField()
     details = CharField()
     tags = JSONField()
-    type = IntegerField()
     url = CharField()
     title_slug = CharField()
     author_avatar = CharField()
@@ -80,7 +79,7 @@ class DataCard(Model):
             logging.info(f"ai working: {sum_content}")
             if sum_content:
                 kw["details"] = sum_content
-            else:
+            elif read_me_content:
                 kw["details"] = read_me_content
 
         logging.info(f"update, url,{url}")
@@ -94,7 +93,6 @@ class DataCard(Model):
         logging.info(f"create, url, {url}")
         kw["status"] = "draft"
         kw["url"] = url
-        kw["type"] = 1
         kw["sort"] = 0
         kw["title"] = name
         kw["title_slug"] = slug
