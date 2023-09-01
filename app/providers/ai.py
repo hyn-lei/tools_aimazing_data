@@ -84,9 +84,9 @@ class Ai:
     def summarize(self, content_: str):
         if not content_:
             return ""
-        if num_tokens_from_messages(content_, self.model) > self.max_tokens:
-            content_ = content_[0 : self.max_tokens]
-        return self.chatbot.ask(content_)
+        # if num_tokens_from_messages(content_, self.model) > self.max_tokens:
+        #     content_ = content_[0 : self.max_tokens]
+        return self.chatbot.ask(prompt=content_, pass_history=False)
 
 
 class Translator:
@@ -110,9 +110,9 @@ class Translator:
     def en_to_zh(self, content_: str):
         if not content_:
             return ""
-        # if num_tokens_from_messages(content_, self.model) > self.max_tokens:
-        #     content_ = content_[0 : self.max_tokens]
-        return self.chatbot.ask(content_)
+        if len(content_) > self.max_tokens:
+            content_ = content_[0 : self.max_tokens]
+        return self.chatbot.ask(prompt=content_, pass_history=False)
 
 
 if __name__ == "__main__":

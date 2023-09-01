@@ -1,13 +1,13 @@
 import datetime
 
-from peewee import CharField, DateTimeField, Model, SQL
+from peewee import CharField, DateTimeField, Model, SQL, BigIntegerField
 
 from app.providers.database import db
 
 
 class BaseModel(Model):
-    created_at = DateTimeField(default=datetime.datetime.now())
-    updated_at = DateTimeField(default=datetime.datetime.now())
+    created_at = BigIntegerField()
+    updated_at = BigIntegerField()
 
     class Meta:
         database = db
