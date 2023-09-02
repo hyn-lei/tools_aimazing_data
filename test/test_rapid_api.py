@@ -41,9 +41,19 @@ print(data)
 
 # response = requests.post(url, json=payload)
 
-translator = Translator("")
-print(translator.en_to_zh(text))
+#translator = Translator("")
+# print(translator.en_to_zh(text))
 # print(response.text)
+
+# deepl 测试版本
+import deepl
+auth_key = ""  # Replace with your key
+translator = deepl.Translator(auth_key)
+
+#result = translator.translate_text(text=text, target_lang="ZH")
+#print(result.text)
+
+print(translator.get_usage())
 
 if __name__ == "__main__":
     pass

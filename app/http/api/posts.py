@@ -9,10 +9,10 @@ from app.models.post import Post
 from app.models.user import User
 from app.providers.github_data import git_hub_retriever
 from app.services.auth import hashing
+import requests
+
 
 router = APIRouter(prefix="/posts")
-
-import requests
 
 
 def content_medium(id: str):
@@ -34,14 +34,16 @@ def content_medium(id: str):
 @router.post("/", dependencies=[Depends(get_db)])
 async def add(request: Request):
     data = await request.json()
-    medium_id = data.get("medium_id")
-    if not medium_id:
-        return {"error": "id invalid"}
-
-    content = content_medium(medium_id)
-    if not content:
-        return {"error": "content empty"}
+    logging.info(data)
+    # medium_id = data.get("medium_id")
+    # if not medium_id:
+    #     return {"error": "id invalid"}
+    #
+    # content = content_medium(medium_id)
+    # if not content:
+    #     return {"error": "content empty"}
 
     # translate and insert
-    Post.add(content)
+    # Post.add(content)
+    Post.add('aaa')
     return {"result": True}

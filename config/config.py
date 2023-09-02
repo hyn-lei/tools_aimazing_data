@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     TIME_ZONE: str = "RPC"
     GITHUB_TOKEN: str = ''
     OPENAI_KEY = ''
+    DEEPL_KEYS:list = None
 
     class Config:
         env_prefix = 'APP_'
