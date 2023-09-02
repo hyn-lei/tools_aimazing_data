@@ -11,7 +11,6 @@ from app.providers.github_data import git_hub_retriever
 from app.services.auth import hashing
 import requests
 
-
 router = APIRouter(prefix="/posts")
 
 
@@ -35,15 +34,14 @@ def content_medium(id: str):
 async def add(request: Request):
     data = await request.json()
     logging.info(data)
-    # medium_id = data.get("medium_id")
-    # if not medium_id:
-    #     return {"error": "id invalid"}
-    #
-    # content = content_medium(medium_id)
-    # if not content:
-    #     return {"error": "content empty"}
+    medium_id = data.get("medium_id")
+    if not medium_id:
+        return {"error": "id invalid"}
+
+    content = content_medium(medium_id)
+    if not content:
+        return {"error": "content empty"}
 
     # translate and insert
-    # Post.add(content)
-    Post.add('aaa')
+    Post.add(content)
     return {"result": True}

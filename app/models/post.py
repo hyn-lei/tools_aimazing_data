@@ -31,5 +31,6 @@ class Post(BaseModel):
         content_zh = cls.translator.en_to_zh(content)
         logging.info(content_zh)
         now = int(datetime.now().timestamp()*1000)
-        Post.create(status='Draft',content='aaa', content_zh='aaa',title='title',summary='aaa', slug='slug',created_at=now,updated_at=now)
+        Post.create(status='Draft',content=content, content_zh=content_zh,
+                    title='title',summary='aaa', slug='slug',created_at=now,updated_at=now)
         # insert
