@@ -4,6 +4,8 @@ import openai
 import tiktoken
 from revChatGPT.V3 import Chatbot
 
+from config.config import settings
+
 api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
@@ -57,11 +59,25 @@ def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
 
 
 class Ai:
-    api_key = ""
+    api_key = settings.OPENAI_KEY
     chatbot = None
     max_tokens = 1024 * 15
     model = "gpt-3.5-turbo-16k-0613"
-    system_prompt = """
+
+    def __init__(self):
+        # self.chatbot = Chatbot(
+        #     api_key=self.api_key,
+        #     engine=self.model,
+        #     max_tokens=self.max_tokens,
+        # )
+        pass
+
+    def summarize(self, content_: str):
+        if not content_:
+            return ""
+        # if num_tokens_from_messages(content_, self.model) > self.max_tokens:
+        #     content_ = content_[0 : self.max_tokens]
+        system_prompt = """
     你的任务是阅读用户的输入，再组织输出总结，满足要求如下：
     
     1. 如果用户给的数据是英文，需要先翻译成中文。
@@ -71,48 +87,47 @@ class Ai:
     5. 不要输出原始html的 img a div 标签与内容。
     6. 不要输出类似，总结内容约500字左右等你的总结信息。
     """
-
-    def __init__(self, key):
-        self.api_key = key
-        self.chatbot = Chatbot(
+        chatbot = Chatbot(
             api_key=self.api_key,
             engine=self.model,
             max_tokens=self.max_tokens,
-            system_prompt=self.system_prompt,
+            system_prompt=system_prompt,
         )
 
-    def summarize(self, content_: str):
+        return chatbot.ask(content_)
+
+    def summarize2(self, content_: str):
         if not content_:
             return ""
-        # if num_tokens_from_messages(content_, self.model) > self.max_tokens:
-        #     content_ = content_[0 : self.max_tokens]
-        return self.chatbot.ask(prompt=content_, pass_history=False)
-
-
-class Translator:
-    api_key = ""
-    chatbot = None
-    max_tokens = 1024 * 15
-    model = "gpt-3.5-turbo-16k-0613"
-    system_prompt = """
-    你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。
-    """
-
-    def __init__(self, key):
-        self.api_key = key
-        self.chatbot = Chatbot(
+        chatbot = Chatbot(
             api_key=self.api_key,
             engine=self.model,
             max_tokens=self.max_tokens,
-            system_prompt=self.system_prompt,
+            system_prompt="""
+            阅读文字，将整个文本做一个总结，输出注意点：
+            1. 禁止分段分行输出，需要一整段输出，最好是3个句子。
+            2. 中文输出。
+            3. 输出内容的长度控制在100个汉字。
+            """,
         )
+        return chatbot.ask(content_)
 
     def en_to_zh(self, content_: str):
         if not content_:
             return ""
+        system_prompt = """
+    你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。
+    """
         if len(content_) > self.max_tokens:
             content_ = content_[0 : self.max_tokens]
-        return self.chatbot.ask(prompt=content_, pass_history=False)
+
+        chatbot = Chatbot(
+            api_key=self.api_key,
+            engine=self.model,
+            max_tokens=self.max_tokens,
+            system_prompt=system_prompt,
+        )
+        return chatbot.ask(content_)
 
 
 if __name__ == "__main__":
