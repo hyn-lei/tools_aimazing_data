@@ -80,16 +80,16 @@ class Ai:
             return ""
         # if num_tokens_from_messages(content_, self.model) > self.max_tokens:
         #     content_ = content_[0 : self.max_tokens]
-        system_prompt = """
-    你的任务是阅读用户的输入，再组织输出总结，满足要求如下：
-    
-    1. 如果用户给的数据是英文，需要先翻译成中文。
-    2. 用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介，需要包含标题、项目介绍、项目特性等。
-    3. 你返回的整体文字总数在500字左右，不要输出英文。
-    4. 不要输出项目的捐赠、捐赠信息、捐款、赞助信息，贡献者、参与贡献者信息，鸣谢信息。
-    5. 不要输出原始html的 img a div 标签与内容。
-    6. 不要输出类似，总结内容约500字左右等你的总结信息。
-    """
+        system_prompt = (
+            "你的任务是阅读用户的输入，再组织输出总结，满足要求如下：\n    \n    "
+            "1. 不管用户提供的是何种语言，都需要你以中文输出结果。\n    "
+            "2. 用户将提供一些项目相关的介绍资料，资料以 markdown 格式呈现，你输出的总结内容可以拿来做项目简介，需要包含标题、项目介绍、项目特性等。\n    "
+            "3. 你返回的整体文字总数在500字左右，不要输出英文。\n    "
+            "4. 不要输出项目的捐赠、捐赠信息、捐款、赞助信息，贡献者、参与贡献者信息，鸣谢信息。\n    "
+            "5. 不要输出原始html的 img a div 标签与内容。\n    "
+            "6. 不要输出类似，总结内容约500字左右等你的总结信息。"
+        )
+
         openai.api_key = self.api_key
 
         response = openai.ChatCompletion.create(
@@ -102,7 +102,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=4000,
+            max_tokens=8000,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -348,5 +348,5 @@ bash <(curl -s https://raw.githubusercontent.com/Yidadaa/ChatGPT-Next-Web/main/s
 [MIT](https://opensource.org/license/mit/)
     """
     print(len(content))
-    result = Ai(api_key).summarize(content)
+    result = Ai().summarize(content)
     print(result)
