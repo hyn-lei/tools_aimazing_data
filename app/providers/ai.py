@@ -10,6 +10,9 @@ api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
 
+import os
+import openai
+
 
 def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
     """Return the number of tokens used by a list of messages."""
@@ -87,14 +90,25 @@ class Ai:
     5. 不要输出原始html的 img a div 标签与内容。
     6. 不要输出类似，总结内容约500字左右等你的总结信息。
     """
-        chatbot = Chatbot(
-            api_key=self.api_key,
-            engine=self.model,
-            max_tokens=self.max_tokens,
-            system_prompt=system_prompt,
-        )
+        openai.api_key = self.api_key
 
-        return chatbot.ask(content_)
+        response = openai.ChatCompletion.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt,
+                },
+                {"role": "user", "content": content_},
+            ],
+            temperature=1,
+            max_tokens=4000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        response_message = response["choices"][0]["message"].to_dict()
+        return response_message.get("content")
 
     def summarize2(self, content_: str):
         if not content_:
@@ -112,22 +126,53 @@ class Ai:
         )
         return chatbot.ask(content_)
 
+    def summarize_official(self, content_: str):
+        if not content_:
+            return ""
+
+        openai.api_key = self.api_key
+
+        response = openai.ChatCompletion.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "阅读文字，将整个文本做一个总结，输出注意点：\n1. 禁止分段分行输出，需要一整段输出，最好是3个句子。\n2. 中文输出。\n3. 输出内容的长度控制在100个汉字。",
+                },
+                {"role": "user", "content": content_},
+            ],
+            temperature=1,
+            max_tokens=4000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        response_message = response["choices"][0]["message"].to_dict()
+        return response_message.get("content")
+
     def en_to_zh(self, content_: str):
         if not content_:
             return ""
-        system_prompt = """
-    你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。
-    """
-        if len(content_) > self.max_tokens:
-            content_ = content_[0 : self.max_tokens]
+        openai.api_key = self.api_key
 
-        chatbot = Chatbot(
-            api_key=self.api_key,
-            engine=self.model,
-            max_tokens=self.max_tokens,
-            system_prompt=system_prompt,
+        response = openai.ChatCompletion.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。",
+                },
+                {"role": "user", "content": content_},
+            ],
+            temperature=1,
+            max_tokens=4000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
         )
-        return chatbot.ask(content_)
+        response_message = response["choices"][0]["message"].to_dict()
+        print(response_message)
+        return response_message.get("content")
 
 
 if __name__ == "__main__":

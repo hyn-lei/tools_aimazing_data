@@ -46,109 +46,13 @@ print(data)
 # translator = Translator("")
 # print(translator.en_to_zh(text))
 # print(response.text)
-text = """
-Today we will go on a new entrepreneurial journey to understand how to build a full-scale online business.
 
-I’ve picked up “ Email Validation Service Business “.
-
-This will be more exciting than you think. And Guess What! ChatGPT Will Help us in almost every step!
-
-
-What is an Email Validation Service Business?
-Imagine having a party and sending out invites to all your friends. But alas, half the invitations bounce back because you jotted down the wrong addresses.
-
-Bummer, right? Now, replace this scenario with businesses sending out emails to customers. We wouldn’t want the same problem there!
-
-That’s where an Email Validation Service comes in like a superhero! It’s a service that verifies email addresses are legit before businesses hit that ‘send’ button.
-
-It is more than just avoiding undelivered emails. It’s about maintaining a high sender reputation, improving email deliverability, reducing bounce rates, and more. It’s about ensuring that your business’s emails reach people’s inboxes, not their spam folders!
-
-Sounds like an awesome business idea, doesn’t it?
-
-That’s because it is! and the cool part, AI will not take over soon!
-
-
-Ever heard of ZeroBounce, Debounce, or NeverBounce?
-
-Those are an example of Email Validation Services. It is a SAAS-based business Model where users pay a monthly subscription or buy credits to validate emails.
-
-Today, I will walk you through how we can build something similar, starting from scratch and passing by all the technical details-and sharing with you three different Methods of building this Service, monetization, and how I built my own email validation service. And much more!
-
-Let’s proceed to the fun part — naming your business!
-
-Choosing a Name for Your Business
-Naming your business can feel like naming your pet turtle — you want it to be fun, unique, and a bit descriptive of its personality. And just like you wouldn’t want your turtle to share its name with every other turtle in the neighborhood, your business name must also stand out!
-
-But don’t worry. You’ve got ChatGPT by your side, and it’s as good at naming businesses as it is at pretty much everything else. You have to ask it.
-
-For example, you could say:
-
-I need a cool name for my Email Validation Service business," and it'll churn out some creative options like "SureMail," "BounceZapper," or "InboxAssure."
-
-But let’s be more professional. Let’s ask ChatGPT The right way!
-
-Here is an optimized prompt template to generate domain names with ChatGPT:
-
-Please generate 10 original and creative domain names specifically tailored for the [niche] niche, focusing on its main concepts and target audience. Your response should prioritize domain names that effectively capture the attention of the [niche] audience and represent its key themes. For each domain name, provide a brief explanation (1-2 sentences) highlighting its relevance to the niche. Ensure that each domain name meets the following criteria: 1. Brand Relevance: Maintain a strong connection with the niche and its central concepts. 2. Memorable: Design the domain names to be captivating, easy to remember, and with familiar spellings. 3. Concise: Keep each domain name between 6-14 characters for ease of typing and recall. 4. Simplicity: Avoid using hyphens and numbers for a cleaner appearance. 5. Keyword Incorporation: Utilize relevant niche keywords for improved SEO, if possible. 6. Pronunciation: Ensure that each domain name is easily understandable when spoken or "radio-friendly." 7. Domain Extensions: Prioritize .com, .net, .org, and .ai extensions when applicable. 8. Legality: Refrain from infringing on existing trademarks or brands. Your response should exhibit flexibility and creativity while maintaining a focused approach on the [niche] niche, providing a solid foundation for building a brand within that market.[niche]:
-Note: This prompt is part of our premium prompts library.
-
-Once you have a few names in mind, it’s time to pick your favorite. Make sure it’s catchy, easy to remember, and gives an idea of your business.
-
-Now that we’ve got our name, let’s jump into understanding how email validation works. Are you ready?
-
-How does Email Validation Work?
-You know how in video games, you have to pass various levels to reach the ultimate boss battle? Well, email validation works similarly — in three levels. Let’s break down this epic ‘game’:
-
-Level One — Syntax Validation: This is the first checkpoint where we make sure the email addresses look like, well, email addresses. Does it have an ‘@’? Is there a period followed by a domain extension, like ‘.com’ or ‘.net’? If the email address is something like ‘John Doe @ nowhere’, our syntax validation will give it a big thumbs down.
-Level Two — DNS MX Validation: Here, we’re checking if the domain of the email address actually exists. So if someone enters an email address with ‘@imaginaryplace.com’, at this level, the validation service will cry foul 😅
-Level Three — Mailbox Validation: Now, this is the ultimate boss battle. This level checks whether the mailbox really exists within the domain. Think of it as confirming if there’s really a guy named John at ‘[email protected] ‘. This is the toughest and most important level to crack.
-
-So, now you understand the basics of how an email validation service works. Next, we will explore the methods to build one.
-
-Three Methods To Build an Email Validation Service
-We’ve three options to build our email validation service.
-
-Buy a Script: This is like getting a ready-to-assemble kit. You buy it, put the pieces together, add a bit of personal flair, and voila, you have your business. You could be up and running in just a few hours! This one is Simple, Fast, and Affordable BUT Hard To Maintain and Scale
-Build on Top of Another API: This method is like standing on the shoulders of a giant (a friendly one, of course). You use an existing service, like the affordable and powerful Debounce API, as your foundation and build your email validation service on top of it.
-Build It Yourself (Advanced): This path is for the brave and tech-savvy amongst you. You are the one who likes to build LEGO sets without instructions. It’s a challenging route but gives you the most control and customization.
-I will cover all three routes in this Guide in a way you don’t need any other post, course, or guide to read.
-
-Method 1: Buy an Email Validation Script
-This is the easiest approach. It is simply finding a ready-made script that you publish online in a couple of hours. And Run Your Business.
-
-I did my Homework, searched for an email validation service script, and found one.
-
-It is called the “Email Verifier Pro” and I found it on Codecanyon.
-
-By the way, codecanyon is a great place to find many scripts to start a business with. I did this several times, and today, I run Large File Sender, which is a script I bought from codecanyon.
-
-Anyway, the idea is you buy the script, host, and configure it. And you are ready!
-
-I am not here to promote the script, or so, but the idea of getting a script from codecanyon, rebranding it, and lunch, works well in many case scenarios, especially in a Growth Marketing strategy called starting a Tool Site as a side project.
-
-BUT! There are a few things you need to consider here.
-As someone who bought more than 50 Scripts from codecanyon and has been testing this method for more than 4 years, I want to share with you some important points and downsides that you must know before taking any action and investing in such scripts and projects.
-
-1. Rebranding
-
-Since this script is available for sale publicly, and anyone can buy it, it is obvious that you should rebrand the whole website to look unique. Otherwise, it will look weird that 100 websites running the same business with the same design under different names.
-
-So you should work on rebranding your script. And this requires some HTML-CSS-JS Skills. or Hiring someone to do it for you.
-
-2. Technical Support
-
-Usually, you get support whenever you buy a script from codecanyon, but the problem is that this support is limited, and you don’t have control over all the features and technical stuff behind the script, especially in our case, “Email validation” I think support and maintenance are very important as you will see later when we discuss how these services work.
-
-3. Updates
-
-Like support, and like any website or service, it requires updates, and this will be all depended on the script author.
-"""
 print(requests.get("https://api.ipify.org").text)
 # deepl 测试版本
 # import deepl
 # auth_key = ""  # Replace with your key
 # translator = deepl.Translator(auth_key)
-print(Ai().summarize2(text))
+print(Ai().summarize(text))
 
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)
