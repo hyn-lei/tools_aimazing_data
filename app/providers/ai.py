@@ -110,22 +110,6 @@ class Ai:
         response_message = response["choices"][0]["message"].to_dict()
         return response_message.get("content")
 
-    def summarize2(self, content_: str):
-        if not content_:
-            return ""
-        chatbot = Chatbot(
-            api_key=self.api_key,
-            engine=self.model,
-            max_tokens=self.max_tokens,
-            system_prompt="""
-            阅读文字，将整个文本做一个总结，输出注意点：
-            1. 禁止分段分行输出，需要一整段输出，最好是3个句子。
-            2. 中文输出。
-            3. 输出内容的长度控制在100个汉字。
-            """,
-        )
-        return chatbot.ask(content_)
-
     def summarize_official(self, content_: str):
         if not content_:
             return ""
