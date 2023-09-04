@@ -64,7 +64,7 @@ def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
 class Ai:
     api_key = settings.OPENAI_KEY
     chatbot = None
-    max_tokens = 1024 * 15
+    max_tokens = 16385
     model = "gpt-3.5-turbo-16k-0613"
 
     def __init__(self):
@@ -102,7 +102,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=8000,
+            max_tokens=int(self.max_tokens - len(content_) / 4),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -110,7 +110,7 @@ class Ai:
         response_message = response["choices"][0]["message"].to_dict()
         return response_message.get("content")
 
-    def summarize_official(self, content_: str):
+    def summarize_in_sentences(self, content_: str):
         if not content_:
             return ""
 
@@ -121,12 +121,16 @@ class Ai:
             messages=[
                 {
                     "role": "system",
-                    "content": "阅读文字，将整个文本做一个总结，输出注意点：\n1. 禁止分段分行输出，需要一整段输出，最好是3个句子。\n2. 中文输出。\n3. 输出内容的长度控制在100个汉字。",
+                    "content": "阅读文字，将整个文本做一个总结，和提炼一个标题，输出注意点：\n"
+                    "1. 总结禁止分段分行输出，需要一整段输出，最好是3个句子。\n"
+                    "2. 中文输出。\n"
+                    "3. 输出内容的长度控制在100个汉字。\n"
+                    '4. 只能以json格式返回数据给用户，{"title":"你总结的标题（中文）","summary":"符合上面要求的总结（中文）"}',
                 },
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=4000,
+            max_tokens=int(self.max_tokens - len(content_) / 4),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -149,7 +153,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=4000,
+            max_tokens=int(self.max_tokens - len(content_) / 4),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,

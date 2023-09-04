@@ -1,3 +1,4 @@
+import json
 import logging
 
 from peewee import IntegerField, CharField
@@ -23,24 +24,36 @@ class Post(BaseModel):
     title = CharField()
     summary = CharField()
     slug = CharField()
+    external_id = CharField()
 
     #
     translator = Translator()
 
     @classmethod
-    def add(cls, content: str):
+    def add(cls, external_id: str, content: str):
         content_zh = cls.translator.en_to_zh(content)
-        logging.info(content_zh)
+        # logging.info(content_zh)
         now = int(datetime.now().timestamp() * 1000)
-        summary = Ai().summarize2(content_zh)
+        s_data = Ai().summarize_in_sentences(content)
+        logging.info(f"ai return, id:{external_id}, s_data:{s_data}")
+        try:
+            j_data = json.loads(s_data)
+            title = j_data.get("title")
+            summary = j_data.get("summary")
+        except Exception:
+            j_data = s_data.split("\n")
+            title = j_data[0]
+            summary = j_data[1]
+
         Post.create(
             status="Draft",
             content=content,
             content_zh=content_zh,
-            title="title",
+            title=title,
             summary=summary,
-            slug="slug",
+            slug=title,
             created_at=now,
             updated_at=now,
+            external_id=external_id,
         )
         # insert

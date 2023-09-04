@@ -33,7 +33,7 @@ def git_hub_retriever(github_url: str):
     tags = summary_data.get("topics", [])
 
     activity = github.activity_data()
-    # print(activity)
+    print(github)
     latest_update = activity[0].get("timestamp")
     releases = github.release_data()
     latest_version = ""

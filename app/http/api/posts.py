@@ -43,5 +43,5 @@ async def add(request: Request):
         return {"error": "content empty"}
 
     # translate and insert
-    Post.add(content)
+    Post.add(medium_id, content)
     return {"result": True}

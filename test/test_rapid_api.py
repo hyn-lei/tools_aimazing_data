@@ -20,7 +20,7 @@ text = """
 data = {"markdown": text}
 
 markdown = data.get("markdown")
-print(data)
+print(len(text))
 
 # translate
 
@@ -47,12 +47,12 @@ print(data)
 # print(translator.en_to_zh(text))
 # print(response.text)
 
-print(requests.get("https://api.ipify.org").text)
+# print(requests.get("https://api.ipify.org").text)
 # deepl 测试版本
 # import deepl
 # auth_key = ""  # Replace with your key
 # translator = deepl.Translator(auth_key)
-print(Ai().summarize(text))
+print(Ai().summarize_in_sentences(text))
 
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)

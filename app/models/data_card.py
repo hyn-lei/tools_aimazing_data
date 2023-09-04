@@ -34,7 +34,7 @@ class DataCard(Model):
     latest_update = CharField()
 
     #
-    ai = Ai(settings.OPENAI_KEY)
+    ai = Ai()
 
     @classmethod
     def list_all(cls):
