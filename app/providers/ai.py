@@ -65,6 +65,7 @@ class Ai:
     api_key = settings.OPENAI_KEY
     chatbot = None
     max_tokens = 16385
+    tiktoken_divide_word = 3.5
     model = "gpt-3.5-turbo-16k-0613"
 
     def __init__(self):
@@ -102,7 +103,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / 4),
+            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -125,12 +126,12 @@ class Ai:
                     "1. 总结禁止分段分行输出，需要一整段输出，最好是3个句子。\n"
                     "2. 中文输出。\n"
                     "3. 输出内容的长度控制在100个汉字。\n"
-                    '4. 只能以json格式返回数据给用户，{"title":"你总结的标题（中文）","summary":"符合上面要求的总结（中文）"}',
+                    '4. 只能以合法的json格式返回数据给用户，{"title":"你总结的标题（中文）","summary":"符合上面要求的总结（中文）"}',
                 },
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / 4),
+            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -153,7 +154,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / 4),
+            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
