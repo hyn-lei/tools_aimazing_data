@@ -11,7 +11,7 @@ pydantic[dotenv]
 python-jose[cryptography]
 
 requests
-psycopg2
+psycopg2-binary
 
 revChatGPT
 
