@@ -13,6 +13,8 @@ python-jose[cryptography]
 requests
 psycopg2-binary
 
+gunicorn
+
 revChatGPT
 
 deepl
