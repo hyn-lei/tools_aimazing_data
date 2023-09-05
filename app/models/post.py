@@ -40,10 +40,10 @@ class Post(BaseModel):
             j_data = json.loads(s_data)
             title = j_data.get("title")
             summary = j_data.get("summary")
-        except Exception:
-            j_data = s_data.split("\n")
-            title = j_data[0]
-            summary = j_data[1]
+        except Exception as e:
+            logging.error("解析 ai 总结数据出错，需要手工处理")
+            title = external_id
+            summary = "ai数据解析出错，需手工处理"
 
         Post.create(
             status="Draft",
