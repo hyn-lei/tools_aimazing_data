@@ -61,6 +61,15 @@ def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
     return num_tokens
 
 
+def cal_token_count(content_: str):
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k-0613")
+
+    token_count = len(encoding.encode(content_))
+    # print(f"The text contains {token_count} tokens.")
+
+    return token_count
+
+
 class Ai:
     api_key = settings.OPENAI_KEY
     chatbot = None
@@ -103,7 +112,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
+            max_tokens=self.max_tokens - len(content_) / self.tiktoken_divide_word,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -131,7 +140,7 @@ class Ai:
                 {"role": "user", "content": content_},
             ],
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
+            max_tokens=self.max_tokens - cal_token_count(content_),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -143,24 +152,24 @@ class Ai:
         if not content_:
             return ""
         openai.api_key = self.api_key
-
+        messages = [
+            {
+                "role": "system",
+                "content": "你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。",
+            },
+            {"role": "user", "content": content_},
+        ]
         response = openai.ChatCompletion.create(
             model=self.model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "你是一个科技文章的翻译人员，请翻译下面的文字，并保留markdown格式，尽量符合中文表达习惯。",
-                },
-                {"role": "user", "content": content_},
-            ],
+            messages=messages,
             temperature=1,
-            max_tokens=int(self.max_tokens - len(content_) / self.tiktoken_divide_word),
+            max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
         )
         response_message = response["choices"][0]["message"].to_dict()
-        print(response_message)
+        # print(response_message)
         return response_message.get("content")
 
 

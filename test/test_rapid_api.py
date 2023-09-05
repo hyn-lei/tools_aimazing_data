@@ -1,6 +1,6 @@
 import requests
 
-from app.providers.ai import Ai
+from app.providers.ai import Ai, cal_token_count
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
@@ -52,7 +52,8 @@ print(len(text))
 # import deepl
 # auth_key = ""  # Replace with your key
 # translator = deepl.Translator(auth_key)
-print(Ai().summarize_in_sentences(text))
+# print(len(text), cal_token_count(text), len(text) / cal_token_count(text))
+print(Ai().en_to_zh(text))
 
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)
