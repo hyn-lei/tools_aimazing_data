@@ -31,7 +31,7 @@ class Post(BaseModel):
 
     @classmethod
     def add(cls, external_id: str, content: str):
-        content_zh = cls.translator.en_to_zh(content)
+        content_zh = Ai().en_to_zh(content)
         # logging.info(content_zh)
         now = int(datetime.now().timestamp() * 1000)
         s_data = Ai().summarize_in_sentences(content)
