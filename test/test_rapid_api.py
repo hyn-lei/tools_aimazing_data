@@ -53,7 +53,7 @@ print(len(text))
 # auth_key = ""  # Replace with your key
 # translator = deepl.Translator(auth_key)
 # print(len(text), cal_token_count(text), len(text) / cal_token_count(text))
-print(Ai().en_to_zh(text))
+print(Ai().summarize_in_sentences(text))
 
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)

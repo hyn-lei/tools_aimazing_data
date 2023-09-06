@@ -102,49 +102,47 @@ class Ai:
 
         openai.api_key = self.api_key
 
+        messages = [
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {"role": "user", "content": content_},
+        ]
+
+        response = self.ai_request(messages)
+        response_message = response["choices"][0]["message"].to_dict()
+        return response_message.get("content")
+
+    def ai_request(self, messages):
         response = openai.ChatCompletion.create(
             model=self.model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt,
-                },
-                {"role": "user", "content": content_},
-            ],
+            messages=messages,
             temperature=1,
-            max_tokens=self.max_tokens - len(content_) / self.tiktoken_divide_word,
+            max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
         )
-        response_message = response["choices"][0]["message"].to_dict()
-        return response_message.get("content")
+        return response
 
     def summarize_in_sentences(self, content_: str):
         if not content_:
             return ""
 
         openai.api_key = self.api_key
+        messages = [
+            {
+                "role": "system",
+                "content": "阅读文字，将整个文本做一个总结，和提炼一个标题，输出注意点：\n"
+                '1. 只能以合法的json格式返回数据给用户，{"title":"你总结的标题（中文）","summary":"符合上面要求的总结（中文）"}\n'
+                "2. 其中的总结禁止分段分行输出，需要一整段输出，最好是3个句子。\n"
+                "3. 输出内容的长度控制在100个汉字。\n",
+            },
+            {"role": "user", "content": content_},
+        ]
+        response = self.ai_request(messages)
 
-        response = openai.ChatCompletion.create(
-            model=self.model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "阅读文字，将整个文本做一个总结，和提炼一个标题，输出注意点：\n"
-                    "1. 总结禁止分段分行输出，需要一整段输出，最好是3个句子。\n"
-                    "2. 中文输出。\n"
-                    "3. 输出内容的长度控制在100个汉字。\n"
-                    '4. 只能以合法的json格式返回数据给用户，{"title":"你总结的标题（中文）","summary":"符合上面要求的总结（中文）"}',
-                },
-                {"role": "user", "content": content_},
-            ],
-            temperature=1,
-            max_tokens=self.max_tokens - cal_token_count(content_),
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-        )
         response_message = response["choices"][0]["message"].to_dict()
         return response_message.get("content")
 
@@ -159,15 +157,7 @@ class Ai:
             },
             {"role": "user", "content": content_},
         ]
-        response = openai.ChatCompletion.create(
-            model=self.model,
-            messages=messages,
-            temperature=1,
-            max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-        )
+        response = self.ai_request(messages)
         response_message = response["choices"][0]["message"].to_dict()
         # print(response_message)
         return response_message.get("content")
