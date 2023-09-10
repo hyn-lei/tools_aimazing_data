@@ -10,6 +10,7 @@ from app.models.post import Post
 from app.models.user import User
 from app.providers.github_data import git_hub_retriever
 from app.services.auth import hashing
+from datetime import datetime
 import requests
 
 router = APIRouter(prefix="/posts")
@@ -42,6 +43,7 @@ async def add(request: Request):
 
     if medium_id:
         content = content_medium(medium_id)
+        medium_id = str(datetime.now())
 
     if not content:
         return {"error": "content empty"}
