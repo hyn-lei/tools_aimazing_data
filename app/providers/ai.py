@@ -121,6 +121,7 @@ class Ai:
             temperature=1,
             max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
             top_p=1,
+            request_timeout=180,
             frequency_penalty=0,
             presence_penalty=0,
         )

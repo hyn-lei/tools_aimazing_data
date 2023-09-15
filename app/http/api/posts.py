@@ -48,6 +48,9 @@ async def add(request: Request):
     if not content:
         return {"error": "content empty"}
 
+    # logging content with medium_id
+    logging.info(f"content: {content}")
+
     # translate and insert
     Post.add(medium_id, content)
     return {"result": True}

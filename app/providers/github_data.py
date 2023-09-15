@@ -102,6 +102,7 @@ class GitHubData:
             "README_CN.md",
             "README_ZH.md",
             "README_zh.md",
+            "README-CN.md",
             "README.md",
             "readme.md",
         )
