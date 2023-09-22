@@ -43,6 +43,7 @@ async def add(request: Request):
 
     if medium_id:
         content = content_medium(medium_id)
+    else:
         medium_id = str(datetime.now())
 
     if not content:
