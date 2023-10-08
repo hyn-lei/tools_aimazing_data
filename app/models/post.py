@@ -29,20 +29,21 @@ class Post(BaseModel):
 
     @classmethod
     def add(cls, external_id: str, content: str):
-        content_zh = Ai().en_to_zh(content)
-        # logging.info(content_zh)
         now = int(datetime.now().timestamp() * 1000)
+        content_zh = "没有翻译出来"
 
         try:
+            content_zh = Ai().en_to_zh(content)
+            # logging.info(content_zh)
             s_data = Ai().summarize_in_sentences(content)
             logging.info(f"ai return, id:{external_id}, s_data:{s_data}")
             j_data = json.loads(s_data)
             title = j_data.get("title")
             summary = j_data.get("summary")
         except Exception as e:
-            logging.error("解析 ai 总结数据出错，需要手工处理")
+            logging.error("ai 翻译或 ai 总结数据出错，需要手工处理", e)
             title = external_id
-            summary = "ai数据解析出错，需手工处理"
+            summary = "ai 翻译或者 ai 总结解析出错，需手工处理"
 
         Post.create(
             status="Draft",
