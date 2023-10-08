@@ -32,9 +32,10 @@ class Post(BaseModel):
         content_zh = Ai().en_to_zh(content)
         # logging.info(content_zh)
         now = int(datetime.now().timestamp() * 1000)
-        s_data = Ai().summarize_in_sentences(content)
-        logging.info(f"ai return, id:{external_id}, s_data:{s_data}")
+
         try:
+            s_data = Ai().summarize_in_sentences(content)
+            logging.info(f"ai return, id:{external_id}, s_data:{s_data}")
             j_data = json.loads(s_data)
             title = j_data.get("title")
             summary = j_data.get("summary")
