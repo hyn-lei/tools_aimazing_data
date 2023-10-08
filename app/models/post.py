@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 from datetime import datetime
 
 from peewee import IntegerField, CharField
@@ -41,7 +42,7 @@ class Post(BaseModel):
             title = j_data.get("title")
             summary = j_data.get("summary")
         except Exception as e:
-            logging.error("ai 翻译或 ai 总结数据出错，需要手工处理", e)
+            logging.error("ai 翻译或 ai 总结数据出错，需要手工处理，%s" % traceback.format_exc())
             title = external_id
             summary = "ai 翻译或者 ai 总结解析出错，需手工处理"
 
