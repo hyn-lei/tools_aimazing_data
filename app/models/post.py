@@ -1,20 +1,18 @@
 import json
 import logging
+from datetime import datetime
 
 from peewee import IntegerField, CharField
 
 from app.models.base_model import BaseModel
 from app.providers.ai import Ai
+from app.providers.database import db_blog
 from app.providers.deepl import Translator
-from app.providers.database import db
-from datetime import datetime
-
-from config.config import settings
 
 
 class Post(BaseModel):
     class Meta:
-        database = db
+        database = db_blog
         table_name = "posts"
 
     id = IntegerField(primary_key=True)
