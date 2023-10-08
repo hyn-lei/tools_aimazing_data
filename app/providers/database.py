@@ -31,7 +31,18 @@ db = PostgresqlDatabase(
     user=settings.USER,
     host=settings.HOST,
     password=settings.PASSWORD,
-    port=settings.PORT
+    port=settings.PORT,
+    options="-c search_path=aimazing",
 )
 
 db._state = PeeweeConnectionState()
+
+
+db_blog = PostgresqlDatabase(
+    settings.DATABASE,
+    user=settings.USER,
+    host=settings.HOST,
+    password=settings.PASSWORD,
+    port=settings.PORT,
+    options="-c search_path=blog_1kcode",
+)

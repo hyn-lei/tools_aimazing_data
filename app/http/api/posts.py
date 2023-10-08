@@ -1,17 +1,12 @@
-import json
 import logging
-
-from fastapi import APIRouter, Depends, Request
-from starlette.responses import Response, JSONResponse
-
-from app.http.deps import get_db
-from app.models.data_card import DataCard
-from app.models.post import Post
-from app.models.user import User
-from app.providers.github_data import git_hub_retriever
-from app.services.auth import hashing
 from datetime import datetime
+
 import requests
+from fastapi import APIRouter, Depends, Request
+from starlette.responses import JSONResponse
+
+from app.http.deps import get_db_blog
+from app.models.post import Post
 
 router = APIRouter(prefix="/posts")
 
@@ -32,7 +27,7 @@ def content_medium(id: str):
     return data.get("markdown")
 
 
-@router.post("/", dependencies=[Depends(get_db)])
+@router.post("/", dependencies=[Depends(get_db_blog)])
 async def add(request: Request):
     data = await request.json()
     logging.info(data)
