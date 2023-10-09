@@ -121,7 +121,7 @@ class Ai:
             temperature=1,
             max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
             top_p=1,
-            request_timeout=180,
+            request_timeout=360,
             frequency_penalty=0,
             presence_penalty=0,
         )
@@ -138,7 +138,7 @@ class Ai:
                 "content": "阅读文字，将整个文本做一个总结，和提炼一个标题，输出注意点：\n"
                 '1. 只能以合法的json格式返回数据给用户，{"title":"你总结的标题（符合中文表达习惯的内容）","summary":"符合上面要求的总结（符合中文表达习惯的内容）"}\n'
                 "2. 其中的总结禁止分段分行输出，需要一整段输出，最好是3个句子。\n"
-                "3. 输出内容的长度控制在100个汉字。\n",
+                "3. 输出内容的长度控制在100个汉字，禁止英文输出。\n",
             },
             {"role": "user", "content": content_},
         ]
