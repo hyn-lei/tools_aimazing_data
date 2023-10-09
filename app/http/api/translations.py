@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 
 from app.http.deps import get_db_blog
 from app.models.post import Post
+from app.providers.ai import ai_handle
 
 router = APIRouter(prefix="/translations")
 
@@ -26,7 +27,7 @@ async def get(request: Request):
     logging.info(f"content: {content}")
 
     # translate
-    title, summary, translation = Post.ai_handle(content)
+    title, summary, translation = ai_handle(content)
     logging.info(f"title:{title}, summary:{summary}, translation:{translation}")
 
     return {"title": title, "summary": summary, "translation": translation}
