@@ -27,4 +27,6 @@ async def get(request: Request):
 
     # translate
     title, summary, translation = Post.ai_handle(content)
+    logging.info(f"title:{title}, summary:{summary}, translation:{translation}")
+
     return {"title": title, "summary": summary, "translation": translation}

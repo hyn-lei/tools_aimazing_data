@@ -1,5 +1,8 @@
 import json
+import logging
 import os
+import traceback
+
 import openai
 import tiktoken
 from revChatGPT.V3 import Chatbot
@@ -162,6 +165,35 @@ class Ai:
         response_message = response["choices"][0]["message"].to_dict()
         # print(response_message)
         return response_message.get("content")
+
+
+def ai_handle(content: str):
+    if not content:
+        return "", "", ""
+
+    try:
+        content_zh = Ai().en_to_zh(content)
+    except Exception as e:
+        error = traceback.format_exc()
+        content_zh = "AI 翻译出错，" + error
+
+    try:
+        # logging.info(content_zh)
+        s_data = Ai().summarize_in_sentences(content)
+    except Exception as e:
+        error = "AI 总结出错" + traceback.format_exc()
+        logging.error(error)
+        return "", error, content_zh
+
+    try:
+        j_data = json.loads(s_data)
+        title = j_data.get("title")
+        summary = j_data.get("summary")
+    except Exception as e:
+        error = "解析输出，AI 原始数据：" + s_data
+        return "", error, content_zh
+
+    return title, summary, content_zh
 
 
 if __name__ == "__main__":

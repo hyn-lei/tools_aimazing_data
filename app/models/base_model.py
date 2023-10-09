@@ -1,6 +1,4 @@
-import datetime
-
-from peewee import CharField, DateTimeField, Model, SQL, BigIntegerField
+from peewee import DateTimeField, Model, SQL, BigIntegerField
 
 from app.providers.database import db
 
