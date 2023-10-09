@@ -5,11 +5,10 @@ import requests
 from fastapi import APIRouter, Depends, Request
 from starlette.responses import JSONResponse
 
-from app.http.deps import get_db_blog
+from app.http.deps import get_db
 from app.models.doc_page import DocPage
-from app.models.post import Post
 
-router = APIRouter(prefix="/posts")
+router = APIRouter(prefix="/doc_pages")
 
 
 def content_medium(id: str):
@@ -28,7 +27,7 @@ def content_medium(id: str):
     return data.get("markdown")
 
 
-@router.post("/", dependencies=[Depends(get_db_blog)])
+@router.post("/", dependencies=[Depends(get_db)])
 async def add(request: Request):
     data = await request.json()
     logging.info(data)
@@ -50,6 +49,6 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    Post.add(medium_id, content)
+    DocPage.add(content)
 
     return {"result": True}
