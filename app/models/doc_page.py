@@ -9,7 +9,7 @@ from app.providers.database import db
 class DocPage(Model):
     class Meta:
         database = db
-        table_name = "doc_page"
+        table_name = "doc_pages"
 
     id = IntegerField(primary_key=True)
     status = CharField()
@@ -24,7 +24,7 @@ class DocPage(Model):
 
         cls.create(
             status="Draft",
-            content=content,
+            content=content_zh,
             title=title,
             summary=summary,
             slug=title,
