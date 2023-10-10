@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, Request
 from starlette.responses import JSONResponse
 
 from app.http.deps import get_db_blog
-from app.models.doc_page import DocPage
 from app.models.post import Post
 
 router = APIRouter(prefix="/posts")
