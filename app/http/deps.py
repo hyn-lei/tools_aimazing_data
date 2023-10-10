@@ -29,7 +29,7 @@ def get_auth_user(token: str = Depends(oauth2_token_schema)) -> User:
     return user
 
 
-def get_db(db_state=Depends(reset_db_state)):
+def get_db():
     try:
         database.db.connect()
         yield
