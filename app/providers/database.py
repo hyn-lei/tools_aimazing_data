@@ -35,7 +35,7 @@ db = PostgresqlDatabase(
     options="-c search_path=aimazing",
 )
 
-db._state = PeeweeConnectionState()
+# db._state = PeeweeConnectionState()
 
 
 db_blog = PostgresqlDatabase(
