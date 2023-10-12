@@ -29,7 +29,7 @@ def get_auth_user(token: str = Depends(oauth2_token_schema)) -> User:
     return user
 
 
-def get_db():
+def get_db(state=Depends(reset_db_state)):
     try:
         database.db.connect()
         yield
@@ -38,7 +38,7 @@ def get_db():
             database.db.close()
 
 
-def get_db_blog():
+def get_db_blog(state=Depends(reset_db_state)):
     try:
         database.db_blog.connect()
         yield

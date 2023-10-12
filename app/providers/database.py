@@ -35,7 +35,19 @@ db = PostgresqlDatabase(
     options="-c search_path=aimazing",
 )
 
-# db._state = PeeweeConnectionState()
+db._state = PeeweeConnectionState()
+
+
+class PeeweeConnectionState2(_ConnectionState):
+    def __init__(self, **kwargs):
+        super().__setattr__("_state", db_state)
+        super().__init__(**kwargs)
+
+    def __setattr__(self, name, value):
+        self._state.get()[name] = value
+
+    def __getattr__(self, name):
+        return self._state.get()[name]
 
 
 db_blog = PostgresqlDatabase(
@@ -46,3 +58,5 @@ db_blog = PostgresqlDatabase(
     port=settings.PORT,
     options="-c search_path=blog_1kcode",
 )
+
+db_blog._state = PeeweeConnectionState2()
