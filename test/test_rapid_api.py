@@ -1,6 +1,19 @@
+import datetime
+
 import requests
+from langchain import OpenAI, LLMChain, PromptTemplate
+from langchain.chains.summarize import load_summarize_chain
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import (
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+    ChatPromptTemplate,
+)
+from langchain.schema import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from app.providers.ai import Ai, cal_token_count
+from config.config import settings
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
@@ -53,10 +66,97 @@ print(len(text))
 # auth_key = ""  # Replace with your key
 # translator = deepl.Translator(auth_key)
 # print(len(text), cal_token_count(text), len(text) / cal_token_count(text))
-print(Ai().summarize_in_sentences(text))
-
+print(datetime.datetime.now())
+# print(Ai().summarize_in_sentences(text))
+print(cal_token_count(text))
+print(datetime.datetime.now())
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)
 
+
+def langchain_test(content: str):
+    # 初始化文本分割器
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=0)
+
+    # 切分文本
+    split_chunks = text_splitter.split_text(content)
+    print(f"chunks:{len(split_chunks)}")
+
+    # 加载 llm 模型
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=1500)
+
+    docs = [Document(page_content=t) for t in split_chunks]
+
+    # 创建总结链
+    chain = load_summarize_chain(llm, chain_type="refine", verbose=True)
+
+    # 执行总结链，（为了快速演示，只总结前5段）
+    result = chain.run(docs)
+
+    print(result)
+
+
+def langchain_test2(content: str):
+    # 初始化文本分割器
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=0)
+
+    # 切分文本
+    split_chunks = text_splitter.split_text(content)
+    for a in split_chunks:
+        print(a)
+        print("==============================================================")
+    print(f"chunks:{len(split_chunks)}")
+
+    template = "You are a helpful assistant that translates English to Chinese. and keep the markdown format."
+    system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+
+    human_template = "{text}"
+    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+    chat_prompt = ChatPromptTemplate.from_messages(
+        [system_message_prompt, human_message_prompt]
+    )
+
+    # get a chat completion from the formatted messages
+    send_p = chat_prompt.format_prompt(
+        input_language="English", output_language="Chinese", text="I love programming."
+    ).to_messages()
+
+    # 加载 llm 模型
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=1500)
+
+    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
+
+    input_list = [{"text": t} for t in split_chunks]
+    result = llm_chain.apply(input_list)
+
+    # result = llm_chain.generate(input_list)
+    print(result)
+    print(len(result))
+
+
+def test3():
+    import requests
+
+    API_URL = "http://147.182.254.122:3000/api/v1/prediction/a926552f-abc7-47b3-993c-b7dfa98d45d9"
+
+    def query(payload):
+        response = requests.post(API_URL, json=payload)
+        return response.json()
+
+    output = query(
+        {
+            "question": "Hey, how are you?",
+        }
+    )
+
+    return output
+
+
+import os
+
 if __name__ == "__main__":
-    pass
+    os.environ["OPENAI_API_KEY"] = settings.OPENAI_KEY
+    langchain_test2(text)
+    # result = test3()
+    # print(result)
