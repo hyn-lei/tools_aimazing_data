@@ -15,6 +15,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from app.providers.ai import Ai, cal_token_count
 from config.config import settings
 
+from datetime import datetime
+
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
 #
@@ -127,11 +129,15 @@ def langchain_test2(content: str):
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
 
+    print(datetime.now())
     input_list = [{"text": t} for t in split_chunks]
     result = llm_chain.apply(input_list)
+    print(datetime.now())
 
     # result = llm_chain.generate(input_list)
     print(result)
+    print(result[0]["text"])
+
     print(len(result))
 
 
