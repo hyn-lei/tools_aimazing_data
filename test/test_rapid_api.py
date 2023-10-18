@@ -100,7 +100,7 @@ def langchain_test(content: str):
 
 def langchain_test2(content: str):
     # 初始化文本分割器
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=14000, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)
 
     # 切分文本
     split_chunks = text_splitter.split_text(content)
