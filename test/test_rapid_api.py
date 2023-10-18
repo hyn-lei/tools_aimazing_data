@@ -98,6 +98,63 @@ def langchain_test(content: str):
     print(result)
 
 
+def langchain_chat(system_message: str, content: str):
+    # 初始化文本分割器
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)
+
+    # 切分文本
+    split_chunks = text_splitter.split_text(content)
+    for a in split_chunks:
+        print(a)
+        print("==============================================================")
+    print(f"chunks:{len(split_chunks)}")
+
+    system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
+
+    human_template = "{text}"
+    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+    chat_prompt = ChatPromptTemplate.from_messages(
+        [system_message_prompt, human_message_prompt]
+    )
+
+    # 加载 llm 模型
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k-0613")
+
+    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
+
+    print(datetime.now())
+    input_list = [{"text": t} for t in split_chunks]
+    result = llm_chain.apply(input_list)
+    print(datetime.now())
+
+    # result = llm_chain.generate(input_list)
+    print(result)
+    # print(result[0]["text"])
+
+    ret = ""
+    for r in result:
+        ret += r.get("text")
+
+    return ret
+
+
+def langchain_translate(content: str):
+    system_message = "You are a helpful assistant that translates English to Chinese. and keep the markdown format."
+    return langchain_chat(system_message, content)
+
+
+def langchain_summarize(content: str):
+    system_message = """
+    Write a concise summary of the following, and output the JSON data. The JSON data structure is as follows:
+
+    {{"title": "Extracted content title in Chinese", "summary": "Summarized content that not more than 300 words in Chinese"}}
+
+    the value of json data is in Chinese, not in English.
+    """
+    return langchain_chat(system_message, content)
+
+
 def langchain_test2(content: str):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)
@@ -120,10 +177,13 @@ def langchain_test2(content: str):
     )
 
     # get a chat completion from the formatted messages
-    send_p = chat_prompt.format_prompt(
-        input_language="English", output_language="Chinese", text="I love programming."
-    ).to_messages()
+    # send_p = chat_prompt.format_prompt(
+    #     input_language="English", output_language="Chinese", text="I love programming."
+    # ).to_messages()
 
+    # and extract and summarize the translated content, and output the JSON data. The JSON data structure is as follows
+
+    # {"title": "Extracted content title in Chinese", "summary": "Extracted content subject, content not more than 300 words in Chinese", "translation": "Translated content of the article"}
     # 加载 llm 模型
     llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k-0613")
 
@@ -131,14 +191,18 @@ def langchain_test2(content: str):
 
     print(datetime.now())
     input_list = [{"text": t} for t in split_chunks]
-    result = llm_chain.generate(input_list)
+    result = llm_chain.apply(input_list)
     print(datetime.now())
 
     # result = llm_chain.generate(input_list)
-    print(result.json())
+    print(result)
     # print(result[0]["text"])
 
-    print(len(result.llm_output))
+    ret = ""
+    for r in result:
+        ret += r.get("text")
+
+    return ret
 
 
 def test3():

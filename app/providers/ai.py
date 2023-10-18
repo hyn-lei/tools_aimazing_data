@@ -8,6 +8,7 @@ import tiktoken
 from revChatGPT.V3 import Chatbot
 
 from config.config import settings
+from test.test_rapid_api import langchain_translate, langchain_summarize
 
 api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -172,14 +173,15 @@ def ai_handle(content: str):
         return "", "", ""
 
     try:
-        content_zh = Ai().en_to_zh(content)
+        # content_zh = Ai().en_to_zh(content)
+        content_zh = langchain_translate(content)
     except Exception as e:
         error = traceback.format_exc()
         content_zh = "AI 翻译出错，" + error
 
     try:
         # logging.info(content_zh)
-        s_data = Ai().summarize_in_sentences(content)
+        s_data = langchain_summarize(content)
     except Exception as e:
         error = "AI 总结出错" + traceback.format_exc()
         logging.error(error)
