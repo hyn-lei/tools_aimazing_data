@@ -2,6 +2,7 @@ import datetime
 from datetime import datetime
 
 from langchain import LLMChain
+from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import (
@@ -116,7 +117,12 @@ def langchain_chat(system_message: str, content: str):
     )
 
     # 加载 llm 模型
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k-0613")
+    llm = ChatOpenAI(
+        model_name="gpt-3.5-turbo-16k-0613",
+        temperature=0,
+        streaming=True,
+        callbacks=[StreamingStdOutCallbackHandler()],
+    )
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
 
