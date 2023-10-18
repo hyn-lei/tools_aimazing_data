@@ -12,7 +12,6 @@ from langchain.prompts import (
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from app.providers.ai import cal_token_count
 from config.config import settings
 
 #
@@ -68,7 +67,7 @@ print(len(text))
 # print(len(text), cal_token_count(text), len(text) / cal_token_count(text))
 print(datetime.now())
 # print(Ai().summarize_in_sentences(text))
-print(cal_token_count(text))
+# print(cal_token_count(text))
 print(datetime.now())
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)
