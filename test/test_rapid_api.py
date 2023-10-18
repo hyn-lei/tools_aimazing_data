@@ -1,4 +1,5 @@
 import datetime
+import logging
 from datetime import datetime
 
 from langchain import LLMChain
@@ -74,6 +75,22 @@ print(datetime.now())
 # print(result.text)
 
 
+class ChainStreamHandler(StreamingStdOutCallbackHandler):
+    def __init__(self):
+        logging.info("start init callback")
+        super().__init__()
+        logging.info("end init callback")
+
+    def on_llm_new_token(self, token, **kwargs):
+        # it's not run to here
+        # print("on llm new token", token)
+        # self.gen.send(token)
+        pass
+
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        logging.info("on llm start")
+
+
 def langchain_test(content: str):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=0)
@@ -121,7 +138,7 @@ def langchain_chat(system_message: str, content: str):
         model_name="gpt-3.5-turbo-16k-0613",
         temperature=0,
         streaming=True,
-        callbacks=[StreamingStdOutCallbackHandler()],
+        callbacks=[ChainStreamHandler()],
     )
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
