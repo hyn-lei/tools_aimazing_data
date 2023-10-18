@@ -2,10 +2,9 @@ import logging
 from datetime import datetime
 
 import requests
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
-from app.http.deps import get_db_blog
 from app.models.post import Post
 
 router = APIRouter(prefix="/posts")
@@ -27,7 +26,7 @@ def content_medium(id: str):
     return data.get("markdown")
 
 
-@router.post("/", dependencies=[Depends(get_db_blog)])
+@router.post("/")
 async def add(request: Request):
     data = await request.json()
     logging.info(data)

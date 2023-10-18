@@ -27,7 +27,7 @@ def content_medium(id: str):
     return data.get("markdown")
 
 
-@router.post("/", dependencies=[Depends(get_db)])
+@router.post("/")
 async def add(request: Request):
     data = await request.json()
     logging.info(data)

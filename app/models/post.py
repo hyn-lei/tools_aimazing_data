@@ -2,6 +2,7 @@ from datetime import datetime
 
 from peewee import IntegerField, CharField
 
+from app.http.deps import get_db_blog
 from app.models.base_model import BaseModel
 from app.providers.ai import ai_handle
 from app.providers.database import db_blog
@@ -25,6 +26,9 @@ class Post(BaseModel):
     def add(cls, external_id: str, content: str):
         now = int(datetime.now().timestamp() * 1000)
         title, summary, content_zh = ai_handle(content)
+
+        # start db
+        get_db_blog()
 
         Post.create(
             status="Draft",
