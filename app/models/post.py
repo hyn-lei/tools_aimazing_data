@@ -27,7 +27,7 @@ class Post(BaseModel):
         now = int(datetime.now().timestamp() * 1000)
         title, summary, content_zh = ai_handle(content)
 
-        # start db
+        # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
         get_db_blog()
 
         Post.create(
