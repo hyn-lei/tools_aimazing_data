@@ -125,7 +125,7 @@ def langchain_test2(content: str):
     ).to_messages()
 
     # 加载 llm 模型
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=1500)
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k-0613")
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
 
