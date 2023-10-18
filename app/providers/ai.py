@@ -169,6 +169,7 @@ def ai_handle(content: str):
         return "", "", ""
 
     try:
+        logging.info("translate...")
         # content_zh = Ai().en_to_zh(content)
         content_zh = langchain_translate(content)
     except Exception as e:
@@ -176,6 +177,7 @@ def ai_handle(content: str):
         content_zh = "AI 翻译出错，" + error
 
     try:
+        logging.info("summarizing...")
         # logging.info(content_zh)
         s_data = langchain_summarize(content)
     except Exception as e:
