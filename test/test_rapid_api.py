@@ -131,14 +131,14 @@ def langchain_test2(content: str):
 
     print(datetime.now())
     input_list = [{"text": t} for t in split_chunks]
-    result = llm_chain.apply(input_list)
+    result = llm_chain.generate(input_list)
     print(datetime.now())
 
     # result = llm_chain.generate(input_list)
-    print(result)
-    print(result[0]["text"])
+    print(result.json())
+    # print(result[0]["text"])
 
-    print(len(result))
+    print(len(result.llm_output))
 
 
 def test3():
