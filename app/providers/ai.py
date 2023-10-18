@@ -1,11 +1,8 @@
 import json
 import logging
-import os
 import traceback
 
-import openai
 import tiktoken
-from revChatGPT.V3 import Chatbot
 
 from config.config import settings
 from test.test_rapid_api import langchain_translate, langchain_summarize
@@ -14,7 +11,6 @@ api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
 
-import os
 import openai
 
 

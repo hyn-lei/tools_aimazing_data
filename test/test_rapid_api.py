@@ -1,7 +1,7 @@
 import datetime
+from datetime import datetime
 
-import requests
-from langchain import OpenAI, LLMChain, PromptTemplate
+from langchain import LLMChain
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import (
@@ -12,10 +12,8 @@ from langchain.prompts import (
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from app.providers.ai import Ai, cal_token_count
+from app.providers.ai import cal_token_count
 from config.config import settings
-
-from datetime import datetime
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
