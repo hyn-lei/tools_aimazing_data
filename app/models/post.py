@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from peewee import IntegerField, CharField
+from retry import retry
 
 from app.http.deps import get_db_blog
 from app.models.base_model import BaseModel
@@ -28,17 +29,21 @@ class Post(BaseModel):
         title, summary, content_zh = ai_handle(content)
 
         # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
-        get_db_blog()
 
-        Post.create(
-            status="Draft",
-            content=content,
-            content_zh=content_zh,
-            title=title,
-            summary=summary,
-            slug=title,
-            created_at=now,
-            updated_at=now,
-            external_id=external_id,
-        )
+        @retry(tries=4, delay=1, backoff=2, max_delay=100)
+        def insert():
+            get_db_blog()
+            Post.create(
+                status="Draft",
+                content=content,
+                content_zh=content_zh,
+                title=title,
+                summary=summary,
+                slug=title,
+                created_at=now,
+                updated_at=now,
+                external_id=external_id,
+            )
+
         # insert
+        insert()

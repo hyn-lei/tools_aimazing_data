@@ -1,4 +1,5 @@
 from peewee import IntegerField, CharField, Model
+from retry import retry
 
 from app.http.deps import get_db
 from app.providers.ai import ai_handle
@@ -22,12 +23,16 @@ class DocPage(Model):
         title, summary, content_zh = ai_handle(content)
 
         # start db
-        get_db()
-        cls.create(
-            status="Draft",
-            content=content_zh,
-            title=title,
-            summary=summary,
-            slug=title,
-        )
+        @retry(tries=4, delay=1, backoff=2, max_delay=100)
+        def insert():
+            get_db()
+            cls.create(
+                status="Draft",
+                content=content_zh,
+                title=title,
+                summary=summary,
+                slug=title,
+            )
+
         # insert
+        insert()
