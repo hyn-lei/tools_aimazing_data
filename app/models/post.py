@@ -6,7 +6,6 @@ from peewee import (
     CharField,
     InterfaceError,
     DatabaseError,
-    PeeweeException,
 )
 from retry import retry
 
@@ -37,9 +36,11 @@ class Post(BaseModel):
 
         # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
         logger = logging.getLogger(__name__)
+        if not title:
+            title = str(now)
 
         @retry(
-            exceptions=(InterfaceError, DatabaseError, PeeweeException),
+            exceptions=(InterfaceError, DatabaseError, Exception),
             tries=4,
             delay=1,
             backoff=2,

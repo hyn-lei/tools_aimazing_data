@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from peewee import (
     IntegerField,
@@ -6,7 +7,6 @@ from peewee import (
     Model,
     InterfaceError,
     DatabaseError,
-    PeeweeException,
 )
 from retry import retry
 
@@ -32,9 +32,13 @@ class DocPage(Model):
         title, summary, content_zh = ai_handle(content)
         logger = logging.getLogger(__name__)
 
+        if not title:
+            now = int(datetime.now().timestamp() * 1000)
+            title = str(now)
+
         # start db
         @retry(
-            exceptions=(InterfaceError, DatabaseError, PeeweeException),
+            exceptions=(InterfaceError, DatabaseError, Exception),
             tries=4,
             delay=1,
             backoff=2,
