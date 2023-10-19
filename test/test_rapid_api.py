@@ -137,7 +137,7 @@ def langchain_chat(system_message: str, content: str):
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k-0613",
         temperature=0,
-        streaming=True,
+        # streaming=True,
         # callbacks=[ChainStreamHandler()],
         openai_api_key=settings.OPENAI_KEY,
     )
