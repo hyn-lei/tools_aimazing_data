@@ -49,7 +49,7 @@ class DocPage(Model):
             logger=logger,
         )
         def insert():
-            db.connect(reuse_if_open=True)
+            cls._meta.database.connect(reuse_if_open=True)
             cls.create(
                 status="Draft",
                 content=content_zh,
