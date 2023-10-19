@@ -11,7 +11,7 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
     ChatPromptTemplate,
 )
-from langchain.schema import Document
+from langchain.schema import Document, StrOutputParser
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from config.config import settings
@@ -142,17 +142,19 @@ def langchain_chat(system_message: str, content: str):
         openai_api_key=settings.OPENAI_KEY,
     )
 
-    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
-    chain = chat_prompt | llm
-    chain.batch()
     logging.info(f"started: {datetime.now()}")
     input_list = [{"text": t} for t in split_chunks]
-    result = llm_chain.apply(input_list)
-    logging.info(f"ended: {datetime.now()}")
 
+    # chain = chat_prompt | llm | StrOutputParser
+    # result = chain.batch(input_list)
+
+    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
+    result = llm_chain.apply(input_list)
     # result = llm_chain.generate(input_list)
     # print(result)
     # print(result[0]["text"])
+
+    logging.info(f"ended: {datetime.now()}")
 
     ret = ""
     for r in result:
