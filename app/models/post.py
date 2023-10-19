@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from peewee import IntegerField, CharField
+from peewee import IntegerField, CharField, InterfaceError, DatabaseError
 from retry import retry
 
 from app.http.deps import get_db_blog
@@ -32,7 +32,14 @@ class Post(BaseModel):
         # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
         logger = logging.getLogger(__name__)
 
-        @retry(tries=4, delay=1, backoff=2, max_delay=100, logger=logger)
+        @retry(
+            exceptions=(InterfaceError, DatabaseError, Exception),
+            tries=4,
+            delay=1,
+            backoff=2,
+            max_delay=100,
+            logger=logger,
+        )
         def insert():
             db_blog.connect(reuse_if_open=True)
             Post.create(

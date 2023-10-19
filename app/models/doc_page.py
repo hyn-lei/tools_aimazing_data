@@ -1,6 +1,6 @@
 import logging
 
-from peewee import IntegerField, CharField, Model
+from peewee import IntegerField, CharField, Model, InterfaceError, DatabaseError
 from retry import retry
 
 from app.http.deps import get_db
@@ -26,7 +26,14 @@ class DocPage(Model):
         logger = logging.getLogger(__name__)
 
         # start db
-        @retry(tries=4, delay=1, backoff=2, max_delay=100, logger=logger)
+        @retry(
+            exceptions=(InterfaceError, DatabaseError, Exception),
+            tries=4,
+            delay=1,
+            backoff=2,
+            max_delay=100,
+            logger=logger,
+        )
         def insert():
             db.connect(reuse_if_open=True)
             cls.create(

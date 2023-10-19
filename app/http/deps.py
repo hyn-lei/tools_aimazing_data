@@ -31,7 +31,7 @@ def get_auth_user(token: str = Depends(oauth2_token_schema)) -> User:
 
 def get_db(state=Depends(reset_db_state)):
     try:
-        database.db.connect()
+        database.db.connect(reuse_if_open=True)
         yield
     finally:
         if not database.db.is_closed():
@@ -40,7 +40,7 @@ def get_db(state=Depends(reset_db_state)):
 
 def get_db_blog(state=Depends(reset_db_state)):
     try:
-        database.db_blog.connect()
+        database.db_blog.connect(reuse_if_open=True)
         yield
     finally:
         if not database.db_blog.is_closed():

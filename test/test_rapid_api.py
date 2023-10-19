@@ -216,7 +216,7 @@ def langchain_test2(content: str):
     print(datetime.now())
 
     # result = llm_chain.generate(input_list)
-    print(result)
+    # print(result)
     # print(result[0]["text"])
 
     ret = ""
