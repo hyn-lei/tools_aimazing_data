@@ -139,6 +139,7 @@ def langchain_chat(system_message: str, content: str):
         temperature=0,
         streaming=True,
         callbacks=[ChainStreamHandler()],
+        openai_api_key=settings.OPENAI_KEY,
     )
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
