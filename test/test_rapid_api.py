@@ -115,7 +115,7 @@ def langchain_test(content: str):
 
 def langchain_chat(system_message: str, content: str):
     # 初始化文本分割器
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10)
 
     # 切分文本
     split_chunks = text_splitter.split_text(content)
@@ -143,7 +143,8 @@ def langchain_chat(system_message: str, content: str):
     )
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
-
+    chain = chat_prompt | llm
+    chain.batch()
     logging.info(f"started: {datetime.now()}")
     input_list = [{"text": t} for t in split_chunks]
     result = llm_chain.apply(input_list)
