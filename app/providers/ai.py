@@ -174,6 +174,7 @@ def ai_handle(content: str):
         content_zh = langchain_translate(content)
     except Exception as e:
         error = traceback.format_exc()
+        logging.exception("AI翻译出错")
         content_zh = "AI翻译出错，" + error
 
         return None, None, content_zh
@@ -183,8 +184,8 @@ def ai_handle(content: str):
         # logging.info(content_zh)
         s_data = langchain_summarize(content)
     except Exception as e:
-        error = "AI 总结出错" + traceback.format_exc()
-        logging.error(error)
+        error = "AI总结出错" + traceback.format_exc()
+        logging.exception("AI总结出错")
         return "error", error, content_zh
 
     try:

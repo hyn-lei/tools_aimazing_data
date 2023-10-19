@@ -119,10 +119,10 @@ def langchain_chat(system_message: str, content: str):
 
     # 切分文本
     split_chunks = text_splitter.split_text(content)
-    for a in split_chunks:
-        print(a)
-        print("==============================================================")
-    print(f"chunks:{len(split_chunks)}")
+    # for a in split_chunks:
+    # logging.info(a)
+    # logging.info("==============================================================")
+    logging.info(f"chunks:{len(split_chunks)}")
 
     system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
 
@@ -138,19 +138,19 @@ def langchain_chat(system_message: str, content: str):
         model_name="gpt-3.5-turbo-16k-0613",
         temperature=0,
         streaming=True,
-        callbacks=[ChainStreamHandler()],
+        # callbacks=[ChainStreamHandler()],
         openai_api_key=settings.OPENAI_KEY,
     )
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
 
-    print(datetime.now())
+    logging.info(f"started: {datetime.now()}")
     input_list = [{"text": t} for t in split_chunks]
     result = llm_chain.apply(input_list)
-    print(datetime.now())
+    logging.info(f"ended: {datetime.now()}")
 
     # result = llm_chain.generate(input_list)
-    print(result)
+    # print(result)
     # print(result[0]["text"])
 
     ret = ""
