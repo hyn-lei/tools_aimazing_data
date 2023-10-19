@@ -1,6 +1,13 @@
 import logging
 
-from peewee import IntegerField, CharField, Model, InterfaceError, DatabaseError
+from peewee import (
+    IntegerField,
+    CharField,
+    Model,
+    InterfaceError,
+    DatabaseError,
+    PeeweeException,
+)
 from retry import retry
 
 from app.http.deps import get_db
@@ -27,7 +34,7 @@ class DocPage(Model):
 
         # start db
         @retry(
-            exceptions=(InterfaceError, DatabaseError, Exception),
+            exceptions=(InterfaceError, DatabaseError, PeeweeException),
             tries=4,
             delay=1,
             backoff=2,

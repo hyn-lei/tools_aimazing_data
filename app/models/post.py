@@ -1,7 +1,13 @@
 import logging
 from datetime import datetime
 
-from peewee import IntegerField, CharField, InterfaceError, DatabaseError
+from peewee import (
+    IntegerField,
+    CharField,
+    InterfaceError,
+    DatabaseError,
+    PeeweeException,
+)
 from retry import retry
 
 from app.http.deps import get_db_blog
@@ -33,7 +39,7 @@ class Post(BaseModel):
         logger = logging.getLogger(__name__)
 
         @retry(
-            exceptions=(InterfaceError, DatabaseError, Exception),
+            exceptions=(InterfaceError, DatabaseError, PeeweeException),
             tries=4,
             delay=1,
             backoff=2,
