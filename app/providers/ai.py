@@ -185,7 +185,7 @@ def ai_handle(content: str):
     except Exception as e:
         error = "AI 总结出错" + traceback.format_exc()
         logging.error(error)
-        return "", error, content_zh
+        return "error", error, content_zh
 
     try:
         j_data = json.loads(s_data)
@@ -193,7 +193,7 @@ def ai_handle(content: str):
         summary = j_data.get("summary")
     except Exception as e:
         error = "解析出错，AI 原始数据：" + s_data
-        return "", error, content_zh
+        return "error", error, content_zh
 
     return title, summary, content_zh
 

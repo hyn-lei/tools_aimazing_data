@@ -39,6 +39,9 @@ class Post(BaseModel):
         if not title:
             return False
 
+        if title == "error":
+            title = str(now)
+
         @retry(
             exceptions=(InterfaceError, DatabaseError, Exception),
             tries=4,

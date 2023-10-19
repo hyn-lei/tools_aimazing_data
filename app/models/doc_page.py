@@ -35,6 +35,10 @@ class DocPage(Model):
         if not title:
             return False
 
+        if title == "error":
+            now = int(datetime.now().timestamp() * 1000)
+            title = str(now)
+
         # start db
         @retry(
             exceptions=(InterfaceError, DatabaseError, Exception),
