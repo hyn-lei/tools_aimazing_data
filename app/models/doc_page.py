@@ -28,7 +28,7 @@ class DocPage(Model):
         # start db
         @retry(tries=4, delay=1, backoff=2, max_delay=100, logger=logger)
         def insert():
-            db.connect()
+            db.connect(reuse_if_open=True)
             cls.create(
                 status="Draft",
                 content=content_zh,

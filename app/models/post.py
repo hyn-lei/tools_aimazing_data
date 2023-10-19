@@ -34,7 +34,7 @@ class Post(BaseModel):
 
         @retry(tries=4, delay=1, backoff=2, max_delay=100, logger=logger)
         def insert():
-            db_blog.connect()
+            db_blog.connect(reuse_if_open=True)
             Post.create(
                 status="Draft",
                 content=content,
