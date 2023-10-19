@@ -33,8 +33,7 @@ class DocPage(Model):
         logger = logging.getLogger(__name__)
 
         if not title:
-            now = int(datetime.now().timestamp() * 1000)
-            title = str(now)
+            return False
 
         # start db
         @retry(
@@ -57,3 +56,5 @@ class DocPage(Model):
 
         # insert
         insert()
+
+        return True

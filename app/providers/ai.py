@@ -166,7 +166,7 @@ class Ai:
 
 def ai_handle(content: str):
     if not content:
-        return "", "", ""
+        return None, None, None
 
     try:
         logging.info("translate...")
@@ -174,7 +174,9 @@ def ai_handle(content: str):
         content_zh = langchain_translate(content)
     except Exception as e:
         error = traceback.format_exc()
-        content_zh = "AI 翻译出错，" + error
+        content_zh = "AI翻译出错，" + error
+
+        return None, None, content_zh
 
     try:
         logging.info("summarizing...")

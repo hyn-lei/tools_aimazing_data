@@ -37,7 +37,7 @@ class Post(BaseModel):
         # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
         logger = logging.getLogger(__name__)
         if not title:
-            title = str(now)
+            return False
 
         @retry(
             exceptions=(InterfaceError, DatabaseError, Exception),
@@ -63,3 +63,4 @@ class Post(BaseModel):
 
         # insert
         insert()
+        return True

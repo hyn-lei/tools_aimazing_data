@@ -48,6 +48,6 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    Post.add(medium_id, content)
+    result = Post.add(medium_id, content)
 
-    return {"result": True}
+    return {"result": result}

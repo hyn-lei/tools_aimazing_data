@@ -47,6 +47,6 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    DocPage.add(content)
+    result = DocPage.add(content)
 
-    return {"result": True}
+    return {"result": result}
