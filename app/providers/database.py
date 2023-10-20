@@ -7,6 +7,7 @@ from config.database import settings
 
 db_state_default = {"closed": None, "conn": None, "ctx": None, "transactions": None}
 db_state = ContextVar("db_state", default=db_state_default.copy())
+db_state2 = ContextVar("db_state", default=db_state_default.copy())
 
 
 class PeeweeConnectionState(_ConnectionState):
@@ -40,7 +41,7 @@ db._state = PeeweeConnectionState()
 
 class PeeweeConnectionState2(_ConnectionState):
     def __init__(self, **kwargs):
-        super().__setattr__("_state", db_state)
+        super().__setattr__("_state", db_state2)
         super().__init__(**kwargs)
 
     def __setattr__(self, name, value):
