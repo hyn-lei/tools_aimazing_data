@@ -149,7 +149,7 @@ def langchain_chat(system_message: str, content: str):
     # result = chain.batch(input_list)
 
     llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
-    result = llm_chain.apply(input_list)
+    result = llm_chain.apply_and_parse(input_list)
     # result = llm_chain.generate(input_list)
     # print(result)
     # print(result[0]["text"])
@@ -158,7 +158,7 @@ def langchain_chat(system_message: str, content: str):
 
     ret = ""
     for r in result:
-        ret += r.get("text")
+        ret += r
 
     return ret
 
@@ -251,6 +251,10 @@ import os
 
 if __name__ == "__main__":
     os.environ["OPENAI_API_KEY"] = settings.OPENAI_KEY
-    langchain_test2(text)
+    # langchain_test2(text)
     # result = test3()
     # print(result)
+    from langchain import hub
+
+    obj = hub.pull("homanp/superagent")
+    print(obj)
