@@ -182,7 +182,7 @@ def ai_handle(content: str):
     try:
         logging.info("summarizing...")
         # logging.info(content_zh)
-        s_data = langchain_summarize(content)
+        s_data = langchain_summarize(content_zh)
     except Exception as e:
         error = "AI总结出错" + traceback.format_exc()
         logging.exception("AI总结出错")
