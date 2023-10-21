@@ -49,7 +49,9 @@ class DocPage(Model):
             logger=logger,
         )
         def insert():
-            cls._meta.database.connect()
+            if cls._meta.database.is_closed:
+                logging.info("db is closed, re connect()")
+                cls._meta.database.connect()
             cls.create(
                 status="Draft",
                 content=content_zh,

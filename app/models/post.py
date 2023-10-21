@@ -51,7 +51,9 @@ class Post(BaseModel):
             logger=logger,
         )
         def insert():
-            cls._meta.database.connect()
+            if cls._meta.database.is_closed:
+                logging.info("db is closed, re connect()")
+                cls._meta.database.connect()
             Post.create(
                 status="Draft",
                 content=content,
