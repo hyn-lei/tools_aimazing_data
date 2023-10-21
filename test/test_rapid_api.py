@@ -179,6 +179,11 @@ def langchain_summarize(content: str):
     return langchain_chat(system_message, content)
 
 
+def generate_percentage_quiz():
+    human_message_prompt = ""
+    chat_prompt = ChatPromptTemplate.from_messages([human_message_prompt])
+
+
 def langchain_test2(content: str):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)

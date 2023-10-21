@@ -51,7 +51,7 @@ class Post(BaseModel):
             logger=logger,
         )
         def insert():
-            cls._meta.database.connect(reuse_if_open=True)
+            cls._meta.database.connect()
             Post.create(
                 status="Draft",
                 content=content,
