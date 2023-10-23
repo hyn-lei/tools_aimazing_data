@@ -49,7 +49,7 @@ class DocPage(Model):
             logger=logger,
         )
         def insert():
-            if cls._meta.database.is_closed:
+            if cls._meta.database.is_closed():
                 logging.info("db is closed, re connect()")
                 cls._meta.database.connect()
             cls.create(
