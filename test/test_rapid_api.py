@@ -170,7 +170,7 @@ def langchain_translate(content: str):
 
 def langchain_summarize(content: str):
     system_message = """
-    Write a concise summary of the following, and output the JSON data. The JSON data structure is as follows:
+    Write a concise, Google SEO-friendly summary of the following, and output the JSON data. The JSON data structure is as follows:
 
     {{"title": "Extracted content title in Chinese", "summary": "Summarized content that not more than 300 words in Chinese"}}
 
