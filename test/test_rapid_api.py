@@ -181,6 +181,61 @@ def langchain_summarize(content: str):
     return langchain_chat(system_message, content)
 
 
+def langchain_percentage_chat(content_, cb):
+    if not content_:
+        return ""
+
+    data_ = langchain_percentage_chat_internal(topic=content_, cb=cb)
+    return data_
+
+
+@retry(
+    exceptions=Exception,
+    tries=3,
+    delay=1,
+    backoff=2,
+    max_delay=100,
+    logger=logging.getLogger(__name__),
+)
+def langchain_percentage_chat_internal(topic, cb=None):
+    llm = ChatOpenAI(
+        model_name="gpt-3.5-turbo-16k-0613",
+        temperature=0.7,
+        # streaming=True,
+        # callbacks=[StreamingStdOutCallbackHandler()],
+        openai_api_key=settings.OPENAI_KEY,
+    )
+
+    # streaming result if needed
+    if cb:
+        llm.streaming = True
+        llm.callbacks = cb
+
+    system_message = """
+    You are a helpful assistant that only answer question about percentage calculation in natural language. 
+    1. Only output calculate percentage steps.
+    2. Just output the 7 letters "UNKNOWN" without any further explanation if you don't understand what I'm saying or are not sure how to convert my instructions into percentage calculation steps.
+    """
+
+    # system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
+
+    human_template = "{text}"
+    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+    chat_prompt = ChatPromptTemplate.from_messages(
+        [system_message, human_message_prompt]
+    )
+    # chain = chat_prompt | llm | StrOutputParser
+
+    chain = LLMChain(llm=llm, prompt=chat_prompt)
+    # print(chain)
+
+    result = chain.invoke({"text": topic})
+    logging.info(f"result:{result}")
+
+    return result.get("text")
+
+
 def langchain_percentage_quiz(content_):
     if not content_:
         return []
@@ -197,7 +252,7 @@ def langchain_percentage_quiz(content_):
     max_delay=100,
     logger=logging.getLogger(__name__),
 )
-def langchain_percentage_quiz_internal(topic: str, cb=None):
+def langchain_percentage_quiz_internal(topic, cb=None):
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k-0613",
         temperature=0.7,
@@ -209,7 +264,7 @@ def langchain_percentage_quiz_internal(topic: str, cb=None):
     # streaming result if needed
     if cb:
         llm.streaming = True
-        llm.callbacks = [cb]
+        llm.callbacks = cb
 
     system_message = """
     Generate 3 percentage questions, the answer, and the calculation steps related to the following topic, and output only the json data. 
@@ -270,6 +325,9 @@ import os
 
 if __name__ == "__main__":
     os.environ["OPENAI_API_KEY"] = settings.OPENAI_KEY
-    langchain_percentage_quiz("40% 39.9$")
+    print("call start.")
+    result = langchain_percentage_chat(
+        "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
+    )
     # result = test3()
-    # print(result)
+    # print(f"call result:{result}.")

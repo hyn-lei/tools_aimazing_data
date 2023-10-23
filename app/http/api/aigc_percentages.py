@@ -10,7 +10,7 @@ router = APIRouter(prefix="/aigc_pts")
 
 
 @router.get("/{content_str}")
-async def token(content_str: str, request: Request):
+async def question(content_str: str, request: Request):
     """
     获取生成的内容
     """
@@ -18,6 +18,24 @@ async def token(content_str: str, request: Request):
     logging.info(f"headers:{headers}")
 
     content = urllib.parse.unquote(content_str)
+    logging.info(f"content_str:{content_str}, content:{content}")
+
+    # question
+    data = langchain_percentage_quiz(content_=content)
+    return data
+
+
+@router.post("/")
+async def chat(content_str: str, request: Request):
+    """
+    获取生成的内容
+    """
+    headers = request.headers
+    logging.info(f"headers:{headers}")
+
+    json_data = await request.json()
+    content = json_data.get("content")
+
     logging.info(f"content_str:{content_str}, content:{content}")
 
     # question
