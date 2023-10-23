@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 from datetime import datetime
 
@@ -13,6 +14,7 @@ from langchain.prompts import (
 )
 from langchain.schema import Document, StrOutputParser
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from retry import retry
 
 from config.config import settings
 
@@ -179,59 +181,71 @@ def langchain_summarize(content: str):
     return langchain_chat(system_message, content)
 
 
-def generate_percentage_quiz():
-    human_message_prompt = ""
-    chat_prompt = ChatPromptTemplate.from_messages([human_message_prompt])
+def langchain_percentage_quiz(content_):
+    if not content_:
+        return []
+
+    data_ = langchain_percentage_quiz_internal(topic=content_)
+    return data_
 
 
-def langchain_test2(content: str):
-    # 初始化文本分割器
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=16000, chunk_overlap=10)
+@retry(
+    exceptions=Exception,
+    tries=3,
+    delay=1,
+    backoff=2,
+    max_delay=100,
+    logger=logging.getLogger(__name__),
+)
+def langchain_percentage_quiz_internal(topic: str, cb=None):
+    llm = ChatOpenAI(
+        model_name="gpt-3.5-turbo-16k-0613",
+        temperature=0.7,
+        # streaming=True,
+        # callbacks=[ChainStreamHandler()],
+        openai_api_key=settings.OPENAI_KEY,
+    )
 
-    # 切分文本
-    split_chunks = text_splitter.split_text(content)
-    for a in split_chunks:
-        print(a)
-        print("==============================================================")
-    print(f"chunks:{len(split_chunks)}")
+    # streaming result if needed
+    if cb:
+        llm.streaming = True
+        llm.callbacks = [cb]
 
-    template = "You are a helpful assistant that translates English to Chinese. and keep the markdown format."
-    system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+    system_message = """
+    Generate 3 percentage questions, the answer, and the calculation steps related to the following topic, and output only the json data. 
+    
+    The JSON data structure is as follows:
+    [
+        {{
+        "question":"percentage related question1", 
+        "answer": "answer1", 
+        "steps": [
+            {{"name":"step1","text":"text related to step1"}},
+            {{"name":"step2","text":"text related to step2"}},
+            ...
+            {{"name":"stepn","text":"text related to stepn"}}
+            ]
+        }},
+    ]    
+    """
+
+    # system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
 
     human_template = "{text}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
     chat_prompt = ChatPromptTemplate.from_messages(
-        [system_message_prompt, human_message_prompt]
+        [system_message, human_message_prompt]
     )
+    # chain = chat_prompt | llm | StrOutputParser
 
-    # get a chat completion from the formatted messages
-    # send_p = chat_prompt.format_prompt(
-    #     input_language="English", output_language="Chinese", text="I love programming."
-    # ).to_messages()
+    chain = LLMChain(llm=llm, prompt=chat_prompt)
+    # print(chain)
 
-    # and extract and summarize the translated content, and output the JSON data. The JSON data structure is as follows
+    result = chain.invoke({"text": topic})
+    print(result)
 
-    # {"title": "Extracted content title in Chinese", "summary": "Extracted content subject, content not more than 300 words in Chinese", "translation": "Translated content of the article"}
-    # 加载 llm 模型
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k-0613")
-
-    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
-
-    print(datetime.now())
-    input_list = [{"text": t} for t in split_chunks]
-    result = llm_chain.apply(input_list)
-    print(datetime.now())
-
-    # result = llm_chain.generate(input_list)
-    # print(result)
-    # print(result[0]["text"])
-
-    ret = ""
-    for r in result:
-        ret += r.get("text")
-
-    return ret
+    return json.loads(result)
 
 
 def test3():
@@ -256,10 +270,6 @@ import os
 
 if __name__ == "__main__":
     os.environ["OPENAI_API_KEY"] = settings.OPENAI_KEY
-    # langchain_test2(text)
+    langchain_percentage_quiz("40% 39.9$")
     # result = test3()
     # print(result)
-    from langchain import hub
-
-    obj = hub.pull("homanp/superagent")
-    print(obj)

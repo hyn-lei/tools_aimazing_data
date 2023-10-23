@@ -1,5 +1,12 @@
 from fastapi import APIRouter
-from app.http.api import demo, data_cards, posts, translations, doc_pages
+from app.http.api import (
+    demo,
+    data_cards,
+    posts,
+    translations,
+    doc_pages,
+    aigc_percentages,
+)
 from app.http.api import auth
 from app.http.api import users
 
@@ -18,3 +25,5 @@ api_router.include_router(posts.router, tags=["posts"])
 api_router.include_router(doc_pages.router, tags=["doc_pages"])
 
 api_router.include_router(translations.router, tags=["translations"])
+
+api_router.include_router(aigc_percentages.router, tags=["aigc_pts"])
