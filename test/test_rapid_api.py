@@ -272,32 +272,32 @@ def langchain_percentage_quiz_internal(topic, cb=None):
     Output Format:
     ```json
     [
-        {
+        {{
             "question": "In the context of inventory management, if a retail store had 150 units of a product in stock last month and now has 120 units, what is the percentage decrease in inventory? This information is crucial for risk assessment to prevent stockouts.",
             "answer": "20%",
             "steps": [
-                {"name": "Step 1", "text": "Calculate the change in inventory: 150 - 120 = 30 units"},
-                {"name": "Step 2", "text": "Divide the change by the original amount: 30 / 150 = 0.2"},
-                {"name": "Step 3", "text": "Convert the result to a percentage: 0.2 * 100 = 20%"}
+                {{"name": "Step 1", "text": "Calculate the change in inventory: 150 - 120 = 30 units"}},
+                {{"name": "Step 2", "text": "Divide the change by the original amount: 30 / 150 = 0.2"}},
+                {"name": "Step 3", "text": "Convert the result to a percentage: 0.2 * 100 = 20%"}}
             ]
-        },
-        {
+        }},
+        {{
             "question": "A shop is offering a 15% discount on a jacket priced at $80. What is the discounted price of the jacket? This information helps in performance tracking of sales promotions.",
             "answer": "$68",
             "steps": [
-                {"name": "Step 1", "text": "Calculate the discount amount: 15% of $80 = $12"},
-                {"name": "Step 2", "text": "Subtract the discount from the original price: $80 - $12 = $68"}
+                {{"name": "Step 1", "text": "Calculate the discount amount: 15% of $80 = $12"}},
+                {{"name": "Step 2", "text": "Subtract the discount from the original price: $80 - $12 = $68"}}
             ]
         },
-        {
+        {{
             "question": "If a product was initially priced at $45 and is now priced at $50, what is the percentage increase in price? This information aids in informed decision-making for pricing strategies.",
             "answer": "11.11%",
             "steps": [
-                {"name": "Step 1", "text": "Calculate the change in price: $50 - $45 = $5"},
-                {"name": "Step 2", "text": "Divide the change by the original price: $5 / $45 ≈ 0.1111"},
-                {"name": "Step 3", "text": "Convert the result to a percentage: 0.1111 * 100 ≈ 11.11%"}
+                {{"name": "Step 1", "text": "Calculate the change in price: $50 - $45 = $5"}},
+                {{"name": "Step 2", "text": "Divide the change by the original price: $5 / $45 ≈ 0.1111"}},
+                {{"name": "Step 3", "text": "Convert the result to a percentage: 0.1111 * 100 ≈ 11.11%"}}
             ]
-        }
+        }}
     ]
     ```
     """
