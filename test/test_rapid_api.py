@@ -267,39 +267,23 @@ def langchain_percentage_quiz_internal(topic, cb=None):
         llm.callbacks = cb
 
     system_message = """
-    Generate three detailed percentage questions based on various real-life scenarios, specifically tailored for applications in risk assessment, performance tracking, and informed decision-making. Each question should come from a different context such as inventory management, discount percentages, and item pricing. Ensure to provide the correct answer and a comprehensive step-by-step guide on how to solve each question.
-
-    Output Format:
-    ```json
+    Generate 3 percentage questions, the answer, and the calculation steps related to the following topic, and output only the json data. 
+    
+    The JSON data structure is as follows:
     [
         {{
-            "question": "In the context of inventory management, if a retail store had 150 units of a product in stock last month and now has 120 units, what is the percentage decrease in inventory? This information is crucial for risk assessment to prevent stockouts.",
-            "answer": "20%",
-            "steps": [
-                {{"name": "Step 1", "text": "Calculate the change in inventory: 150 - 120 = 30 units"}},
-                {{"name": "Step 2", "text": "Divide the change by the original amount: 30 / 150 = 0.2"}},
-                {{"name": "Step 3", "text": "Convert the result to a percentage: 0.2 * 100 = 20%"}}
+        "question":"percentage related question1", 
+        "answer": "answer1", 
+        "steps": [
+            {{"name":"step1","text":"text related to step1"}},
+            {{"name":"step2","text":"text related to step2"}},
+            ...
+            {{"name":"stepn","text":"text related to stepn"}}
             ]
         }},
-        {{
-            "question": "A shop is offering a 15% discount on a jacket priced at $80. What is the discounted price of the jacket? This information helps in performance tracking of sales promotions.",
-            "answer": "$68",
-            "steps": [
-                {{"name": "Step 1", "text": "Calculate the discount amount: 15% of $80 = $12"}},
-                {{"name": "Step 2", "text": "Subtract the discount from the original price: $80 - $12 = $68"}}
-            ]
-        }},
-        {{
-            "question": "If a product was initially priced at $45 and is now priced at $50, what is the percentage increase in price? This information aids in informed decision-making for pricing strategies.",
-            "answer": "11.11%",
-            "steps": [
-                {{"name": "Step 1", "text": "Calculate the change in price: $50 - $45 = $5"}},
-                {{"name": "Step 2", "text": "Divide the change by the original price: $5 / $45 ≈ 0.1111"}},
-                {{"name": "Step 3", "text": "Convert the result to a percentage: 0.1111 * 100 ≈ 11.11%"}}
-            ]
-        }}
-    ]
-    ```
+    ]  
+    
+    Each question should be based on different real-life scenarios such as inventory management, discount percentages, and item pricing, etc. 
     """
 
     # system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
