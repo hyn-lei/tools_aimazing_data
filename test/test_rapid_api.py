@@ -278,7 +278,7 @@ def langchain_percentage_quiz_internal(topic, cb=None):
             "steps": [
                 {{"name": "Step 1", "text": "Calculate the change in inventory: 150 - 120 = 30 units"}},
                 {{"name": "Step 2", "text": "Divide the change by the original amount: 30 / 150 = 0.2"}},
-                {"name": "Step 3", "text": "Convert the result to a percentage: 0.2 * 100 = 20%"}}
+                {{"name": "Step 3", "text": "Convert the result to a percentage: 0.2 * 100 = 20%"}}
             ]
         }},
         {{
@@ -288,7 +288,7 @@ def langchain_percentage_quiz_internal(topic, cb=None):
                 {{"name": "Step 1", "text": "Calculate the discount amount: 15% of $80 = $12"}},
                 {{"name": "Step 2", "text": "Subtract the discount from the original price: $80 - $12 = $68"}}
             ]
-        },
+        }},
         {{
             "question": "If a product was initially priced at $45 and is now priced at $50, what is the percentage increase in price? This information aids in informed decision-making for pricing strategies.",
             "answer": "11.11%",
@@ -346,8 +346,9 @@ import os
 if __name__ == "__main__":
     os.environ["OPENAI_API_KEY"] = settings.OPENAI_KEY
     print("call start.")
-    result = langchain_percentage_chat(
-        "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
-    )
+    # result = langchain_percentage_chat(
+    #     "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
+    # )
+    result = langchain_percentage_quiz("20 to 40")
     # result = test3()
-    # print(f"call result:{result}.")
+    print(f"call result:{result}.")
