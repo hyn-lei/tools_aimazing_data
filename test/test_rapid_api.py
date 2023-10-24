@@ -299,8 +299,9 @@ def langchain_percentage_quiz_internal(topic, cb=None):
 
     result = chain.invoke({"text": topic})
     logging.info(f"result:{result}")
+    json_before = result.get("text")
 
-    return json.loads(result.get("text"))
+    return json.loads(json_before)
 
 
 def test3():
