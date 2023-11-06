@@ -140,7 +140,7 @@ def langchain_instruct(system_message: str, content: str, cb):
     # 加载 llm 模型
     llm = OpenAI(
         model_name="gpt-3.5-turbo-instruct-0914",
-        temperature=0,
+        # temperature=0,
         # streaming=True,
         # callbacks=cb,
         openai_api_key=settings.OPENAI_KEY,
