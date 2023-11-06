@@ -166,6 +166,9 @@ def langchain_instruct(system_message: str, content: str, cb):
 
     logging.info(f"ended: {datetime.now()}")
 
+    if cb:
+        pass
+
     ret = ""
     for r in result:
         ret += r.get("text")

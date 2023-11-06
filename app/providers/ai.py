@@ -3,6 +3,7 @@ import logging
 import traceback
 
 import tiktoken
+from langchain.callbacks import StreamingStdOutCallbackHandler
 
 from config.config import settings
 from test.test_rapid_api import langchain_translate, langchain_summarize
@@ -164,6 +165,24 @@ class Ai:
         return response_message.get("content")
 
 
+class Streaming(StreamingStdOutCallbackHandler):
+    result: str = None
+
+    def __init__(self):
+        logging.info("start init callback")
+        super().__init__()
+        logging.info("end init callback")
+
+    def on_llm_new_token(self, token, **kwargs):
+        # it's not run to here
+        logging.info("on llm new token", token)
+        self.result += token
+        # self.gen.send(token)
+
+    def get_result(self):
+        return self.result
+
+
 def ai_handle(content: str):
     if not content:
         return None, None, None
@@ -171,7 +190,10 @@ def ai_handle(content: str):
     try:
         logging.info("translate...")
         # content_zh = Ai().en_to_zh(content)
-        content_zh = langchain_translate(content, None)
+        streaming = Streaming()
+
+        langchain_translate(content, [streaming])
+        content_zh = streaming.get_result()
     except Exception as e:
         error = traceback.format_exc()
         logging.exception("AI翻译出错")
@@ -182,7 +204,9 @@ def ai_handle(content: str):
     try:
         logging.info("summarizing...")
         # logging.info(content_zh)
-        s_data = langchain_summarize(content_zh, None)
+        streaming = Streaming()
+        langchain_summarize(content_zh, [streaming])
+        s_data = streaming.get_result()
     except Exception as e:
         error = "AI总结出错" + traceback.format_exc()
         logging.exception("AI总结出错")
