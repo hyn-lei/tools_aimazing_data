@@ -175,7 +175,7 @@ class Streaming(StreamingStdOutCallbackHandler):
 
     def on_llm_new_token(self, token, **kwargs):
         # it's not run to here
-        logging.info("on llm new token", token)
+        logging.info(f"on llm new token，{token}")
         self.result += token
         # self.gen.send(token)
 
