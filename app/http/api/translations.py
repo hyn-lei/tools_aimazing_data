@@ -1,12 +1,8 @@
 import logging
-from datetime import datetime
 
-import requests
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
-from app.http.deps import get_db_blog
-from app.models.post import Post
 from app.providers.ai import ai_handle
 
 router = APIRouter(prefix="/translations")

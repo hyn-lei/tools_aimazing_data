@@ -345,6 +345,11 @@ if __name__ == "__main__":
     # result = test3()
     callbacks = [ChainStreamHandler()]
 
-    result = langchain_translate(text, None)
+    # result = langchain_translate(text, None)
+    from concurrent.futures import ThreadPoolExecutor
 
+    # 异步执行
+    executor = ThreadPoolExecutor(max_workers=5)
+    executor.submit(lambda: langchain_translate(text, None))
+    result = True
     print(f"call result:{result}.")

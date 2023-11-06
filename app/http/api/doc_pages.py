@@ -1,14 +1,15 @@
 import logging
-from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
-from app.http.deps import get_db
 from app.models.doc_page import DocPage
 
 router = APIRouter(prefix="/doc_pages")
+
+executor = ThreadPoolExecutor(max_workers=5)
 
 
 def content_medium(id: str):
@@ -47,6 +48,7 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    result = DocPage.add(content)
+    executor.submit(lambda: DocPage.add(content))
+    # result = DocPage.add(content)
 
-    return {"result": result}
+    return {"result": True}

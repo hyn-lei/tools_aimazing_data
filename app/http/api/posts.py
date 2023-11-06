@@ -7,7 +7,11 @@ from starlette.responses import JSONResponse
 
 from app.models.post import Post
 
+from concurrent.futures import ThreadPoolExecutor
+
 router = APIRouter(prefix="/posts")
+
+executor = ThreadPoolExecutor(max_workers=5)
 
 
 def content_medium(id: str):
@@ -48,6 +52,7 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    result = Post.add(medium_id, content)
+    executor.submit(lambda: Post.add(medium_id, content))
+    # result = Post.add(medium_id, content)
 
-    return {"result": result}
+    return {"result": True}
