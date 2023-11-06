@@ -210,7 +210,7 @@ def langchain_percentage_chat(content_, cb):
 )
 def langchain_percentage_chat_internal(topic, cb=None):
     llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo-16k-0613",
+        model_name="gpt-3.5-turbo-16k",
         # model_name="gpt-4-0613",
         temperature=0.7,
         # streaming=True,
@@ -266,7 +266,7 @@ def langchain_percentage_quiz(content_):
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
     llm = OpenAI(
-        model_name="gpt-3.5-turbo-16k-0613",
+        model_name="gpt-3.5-turbo-16k",
         temperature=0.7,
         # streaming=True,
         # callbacks=[ChainStreamHandler()],
