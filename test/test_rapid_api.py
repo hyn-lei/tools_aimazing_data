@@ -116,7 +116,7 @@ def langchain_test(content: str):
     print(result)
 
 
-def langchain_chat(system_message: str, content: str, cb):
+def langchain_instruct(system_message: str, content: str, cb):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10)
 
@@ -139,7 +139,7 @@ def langchain_chat(system_message: str, content: str, cb):
     logging.info(f"key: {settings.OPENAI_KEY}")
     # 加载 llm 模型
     llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo-16k-0613",
+        model_name="gpt-3.5-turbo-instruct-0914",
         temperature=0,
         # streaming=True,
         # callbacks=cb,
@@ -174,7 +174,7 @@ def langchain_chat(system_message: str, content: str, cb):
 
 def langchain_translate(content: str, cb):
     system_message = "You are a helpful assistant that translates English to Chinese. and keep the markdown format."
-    return langchain_chat(system_message, content, cb)
+    return langchain_instruct(system_message, content, cb)
 
 
 def langchain_summarize(content: str, cb):
@@ -185,7 +185,7 @@ def langchain_summarize(content: str, cb):
 
     the value of json data is in Chinese, not in English.
     """
-    return langchain_chat(system_message, content, cb)
+    return langchain_instruct(system_message, content, cb)
 
 
 def langchain_percentage_chat(content_, cb):
@@ -262,7 +262,7 @@ def langchain_percentage_quiz(content_):
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
     llm = OpenAI(
-        model_name="gpt-3.5-turbo-instruct-0914",
+        model_name="gpt-3.5-turbo-16k-0613",
         temperature=0.7,
         # streaming=True,
         # callbacks=[ChainStreamHandler()],
