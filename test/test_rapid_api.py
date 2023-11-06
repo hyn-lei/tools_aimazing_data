@@ -3,7 +3,7 @@ import json
 import logging
 from datetime import datetime
 
-from langchain import LLMChain
+from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
@@ -85,7 +85,7 @@ class ChainStreamHandler(StreamingStdOutCallbackHandler):
 
     def on_llm_new_token(self, token, **kwargs):
         # it's not run to here
-        # print("on llm new token", token)
+        print("on llm new token", token)
         # self.gen.send(token)
         pass
 
@@ -115,7 +115,7 @@ def langchain_test(content: str):
     print(result)
 
 
-def langchain_chat(system_message: str, content: str):
+def langchain_chat(system_message: str, content: str, cb):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10)
 
@@ -135,15 +135,21 @@ def langchain_chat(system_message: str, content: str):
         [system_message_prompt, human_message_prompt]
     )
 
+    logging.info(f"key: {settings.OPENAI_KEY}")
     # 加载 llm 模型
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k-0613",
         temperature=0,
         # streaming=True,
-        # callbacks=[ChainStreamHandler()],
+        # callbacks=cb,
         openai_api_key=settings.OPENAI_KEY,
     )
 
+    if cb:
+        llm.streaming = True
+        llm.callbacks = cb
+
+    print("started...")
     logging.info(f"started: {datetime.now()}")
     input_list = [{"text": t} for t in split_chunks]
 
@@ -165,12 +171,12 @@ def langchain_chat(system_message: str, content: str):
     return ret
 
 
-def langchain_translate(content: str):
+def langchain_translate(content: str, cb):
     system_message = "You are a helpful assistant that translates English to Chinese. and keep the markdown format."
-    return langchain_chat(system_message, content)
+    return langchain_chat(system_message, content, cb)
 
 
-def langchain_summarize(content: str):
+def langchain_summarize(content: str, cb):
     system_message = """
     Write a concise, Google SEO-friendly summary of the following, and output the JSON data. The JSON data structure is as follows:
 
@@ -178,7 +184,7 @@ def langchain_summarize(content: str):
 
     the value of json data is in Chinese, not in English.
     """
-    return langchain_chat(system_message, content)
+    return langchain_chat(system_message, content, cb)
 
 
 def langchain_percentage_chat(content_, cb):
@@ -200,6 +206,7 @@ def langchain_percentage_chat(content_, cb):
 def langchain_percentage_chat_internal(topic, cb=None):
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k-0613",
+        # model_name="gpt-4-0613",
         temperature=0.7,
         # streaming=True,
         # callbacks=[StreamingStdOutCallbackHandler()],
@@ -333,6 +340,10 @@ if __name__ == "__main__":
     # result = langchain_percentage_chat(
     #     "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
     # )
-    result = langchain_percentage_quiz("20 to 40")
+    # result = langchain_percentage_quiz("20 to 40")
     # result = test3()
+    callbacks = [ChainStreamHandler()]
+
+    result = langchain_translate(text, callbacks)
+
     print(f"call result:{result}.")
