@@ -190,10 +190,12 @@ def ai_handle(content: str):
     try:
         logging.info("translate...")
         # content_zh = Ai().en_to_zh(content)
-        streaming = Streaming()
 
-        langchain_translate(content, [streaming])
-        content_zh = streaming.get_result()
+        # streaming = Streaming()
+        # langchain_translate(content, [streaming])
+        # content_zh = streaming.get_result()
+
+        content_zh = langchain_translate(content, None)
     except Exception as e:
         error = traceback.format_exc()
         logging.exception("AI翻译出错")
@@ -204,9 +206,12 @@ def ai_handle(content: str):
     try:
         logging.info("summarizing...")
         # logging.info(content_zh)
-        streaming = Streaming()
-        langchain_summarize(content_zh, [streaming])
-        s_data = streaming.get_result()
+
+        # streaming = Streaming()
+        # langchain_summarize(content_zh, [streaming])
+        # s_data = streaming.get_result()
+
+        s_data = langchain_summarize(content_zh, None)
     except Exception as e:
         error = "AI总结出错" + traceback.format_exc()
         logging.exception("AI总结出错")
