@@ -7,6 +7,7 @@ from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
+from langchain.llms.openai import OpenAI
 from langchain.prompts import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
@@ -260,8 +261,8 @@ def langchain_percentage_quiz(content_):
     logger=logging.getLogger(__name__),
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
-    llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo-16k-0613",
+    llm = OpenAI(
+        model_name="gpt-3.5-turbo-instruct-0914",
         temperature=0.7,
         # streaming=True,
         # callbacks=[ChainStreamHandler()],
@@ -344,6 +345,6 @@ if __name__ == "__main__":
     # result = test3()
     callbacks = [ChainStreamHandler()]
 
-    result = langchain_translate(text, callbacks)
+    result = langchain_translate(text, None)
 
     print(f"call result:{result}.")
