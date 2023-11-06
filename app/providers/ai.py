@@ -166,7 +166,7 @@ class Ai:
 
 
 class Streaming(StreamingStdOutCallbackHandler):
-    result: str = None
+    result: str = ""
 
     def __init__(self):
         logging.info("start init callback")
