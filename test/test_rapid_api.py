@@ -138,7 +138,7 @@ def langchain_instruct(system_message: str, content: str, cb):
 
     logging.info(f"key: {settings.OPENAI_KEY}")
     # 加载 llm 模型
-    llm = ChatOpenAI(
+    llm = OpenAI(
         model_name="gpt-3.5-turbo-instruct-0914",
         temperature=0,
         # streaming=True,
