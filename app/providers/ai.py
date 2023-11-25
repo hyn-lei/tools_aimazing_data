@@ -12,7 +12,11 @@ api_key = ""
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # openai.api_key =
 
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=self.api_key,
+api_key=self.api_key,
+api_key=self.api_key)
 
 
 def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
@@ -101,7 +105,7 @@ class Ai:
             "6. 不要输出类似，总结内容约500字左右等你的总结信息。"
         )
 
-        openai.api_key = self.api_key
+        
 
         messages = [
             {
@@ -116,23 +120,21 @@ class Ai:
         return response_message.get("content")
 
     def ai_request(self, messages):
-        response = openai.ChatCompletion.create(
-            model=self.model,
-            messages=messages,
-            temperature=1,
-            max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
-            top_p=1,
-            request_timeout=360,
-            frequency_penalty=0,
-            presence_penalty=0,
-        )
+        response = client.chat.completions.create(model=self.model,
+        messages=messages,
+        temperature=1,
+        max_tokens=self.max_tokens - cal_token_count(json.dumps(messages)),
+        top_p=1,
+        request_timeout=360,
+        frequency_penalty=0,
+        presence_penalty=0)
         return response
 
     def summarize_in_sentences(self, content_: str):
         if not content_:
             return ""
 
-        openai.api_key = self.api_key
+        
         messages = [
             {
                 "role": "system",
@@ -151,7 +153,7 @@ class Ai:
     def en_to_zh(self, content_: str):
         if not content_:
             return ""
-        openai.api_key = self.api_key
+        
         messages = [
             {
                 "role": "system",
