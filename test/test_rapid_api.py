@@ -8,7 +8,6 @@ from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
-from langchain.llms.openai import OpenAI
 from langchain.prompts import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,

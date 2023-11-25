@@ -9,7 +9,7 @@ from openai import OpenAI
 from config.config import settings
 from test.test_rapid_api import langchain_translate, langchain_summarize
 
-client = OpenAI(api_key=settings.api_key)
+client = OpenAI(api_key=settings.OPENAI_KEY)
 
 
 def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):
