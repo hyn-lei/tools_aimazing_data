@@ -270,7 +270,7 @@ def langchain_percentage_quiz_internal(topic, cb=None):
         temperature=0.7,
         # streaming=True,
         # callbacks=[ChainStreamHandler()],
-        openai_api_key=settings.OPENAI_KEY,
+        api_key=settings.OPENAI_KEY,
     )
 
     # streaming result if needed

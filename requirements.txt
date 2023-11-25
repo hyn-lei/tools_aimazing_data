@@ -19,6 +19,6 @@ revChatGPT
 
 deepl
 
-langchain~=0.0.316
+langchain~=0.0.340
 
 retry
