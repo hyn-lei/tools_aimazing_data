@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 from datetime import datetime
+from openai import OpenAI
 
 from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
@@ -18,6 +19,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from retry import retry
 
 from config.config import settings
+
+client = OpenAI(api_key=settings.api_key)
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
@@ -103,7 +106,9 @@ def langchain_test(content: str):
     print(f"chunks:{len(split_chunks)}")
 
     # 加载 llm 模型
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=1500)
+    llm = client.chat.completions.create(
+        model_name="gpt-3.5-turbo-16k", max_tokens=1500
+    )
 
     docs = [Document(page_content=t) for t in split_chunks]
 
@@ -265,7 +270,7 @@ def langchain_percentage_quiz(content_):
     logger=logging.getLogger(__name__),
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
-    llm = OpenAI(
+    llm = client.chat.completions.create(
         model_name="gpt-3.5-turbo-16k",
         temperature=0.7,
         # streaming=True,
