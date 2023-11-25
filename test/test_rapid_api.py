@@ -20,7 +20,7 @@ from retry import retry
 
 from config.config import settings
 
-client = OpenAI(api_key=settings.api_key)
+client = OpenAI(api_key=settings.OPENAI_KEY)
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
