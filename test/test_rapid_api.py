@@ -138,11 +138,12 @@ def langchain_instruct(system_message: str, content: str, cb):
     # 加载 llm 模型
     llm = ChatOpenAI(
         # model_name="gpt-3.5-turbo-instruct-0914",
-        model_name="gpt-3.5-turbo-16k",
+        model="gpt-3.5-turbo-16k",
         temperature=0,
         # streaming=True,
         # callbacks=cb,
-        openai_api_key=settings.OPENAI_KEY,
+        api_key=settings.OPENAI_KEY,
+        timeout=300,
     )
 
     if cb:
@@ -266,7 +267,9 @@ from langchain.chat_models import ChatOpenAI
     logger=logging.getLogger(__name__),
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
-    llm = ChatOpenAI(model="gpt-3.5-turbo-16k", api_key=settings.OPENAI_KEY)
+    llm = ChatOpenAI(
+        model="gpt-3.5-turbo-16k", api_key=settings.OPENAI_KEY, timeout=300
+    )
     # streaming result if needed
     if cb:
         llm.streaming = True
