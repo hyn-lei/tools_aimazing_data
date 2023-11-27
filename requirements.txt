@@ -21,4 +21,6 @@ deepl
 
 langchain~=0.0.340
 
+openai~=1.3.5
+
 retry

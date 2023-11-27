@@ -2,12 +2,10 @@ import datetime
 import json
 import logging
 from datetime import datetime
-from openai import OpenAI
 
 from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
@@ -18,8 +16,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from retry import retry
 
 from config.config import settings
-
-client = OpenAI(api_key=settings.OPENAI_KEY)
 
 #
 # url = "https://medium2.p.rapidapi.com/article/49bde224f43c/markdown"
@@ -105,9 +101,7 @@ def langchain_test(content: str):
     print(f"chunks:{len(split_chunks)}")
 
     # 加载 llm 模型
-    llm = client.chat.completions.create(
-        model_name="gpt-3.5-turbo-16k", max_tokens=1500
-    )
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", max_tokens=1500)
 
     docs = [Document(page_content=t) for t in split_chunks]
 
@@ -260,6 +254,9 @@ def langchain_percentage_quiz(content_):
     return data_
 
 
+from langchain.chat_models import ChatOpenAI
+
+
 @retry(
     exceptions=Exception,
     tries=3,
@@ -269,14 +266,7 @@ def langchain_percentage_quiz(content_):
     logger=logging.getLogger(__name__),
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
-    llm = client.chat.completions.create(
-        model_name="gpt-3.5-turbo-16k",
-        temperature=0.7,
-        # streaming=True,
-        # callbacks=[ChainStreamHandler()],
-        api_key=settings.OPENAI_KEY,
-    )
-
+    llm = ChatOpenAI(model="gpt-3.5-turbo-16k", api_key=settings.OPENAI_KEY)
     # streaming result if needed
     if cb:
         llm.streaming = True
@@ -302,13 +292,13 @@ def langchain_percentage_quiz_internal(topic, cb=None):
     Each question should be based on different real-life scenarios such as inventory management, discount percentages, and item pricing, etc. 
     """
 
-    # system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
+    system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
 
     human_template = "{text}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
     chat_prompt = ChatPromptTemplate.from_messages(
-        [system_message, human_message_prompt]
+        [system_message_prompt, human_message_prompt]
     )
     # chain = chat_prompt | llm | StrOutputParser
 
@@ -349,15 +339,15 @@ if __name__ == "__main__":
     # result = langchain_percentage_chat(
     #     "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
     # )
-    # result = langchain_percentage_quiz("20 to 40")
-    # result = test3()
-    callbacks = [ChainStreamHandler()]
+    result = langchain_percentage_quiz("20 to 40")
+    # # result = test3()
+    # callbacks = [ChainStreamHandler()]
 
     # result = langchain_translate(text, None)
-    from concurrent.futures import ThreadPoolExecutor
-
-    # 异步执行
-    executor = ThreadPoolExecutor(max_workers=5)
-    executor.submit(lambda: langchain_translate(text, None))
-    result = True
+    # from concurrent.futures import ThreadPoolExecutor
+    #
+    # # 异步执行
+    # executor = ThreadPoolExecutor(max_workers=5)
+    # executor.submit(lambda: langchain_translate(text, None))
+    # result = True
     print(f"call result:{result}.")
