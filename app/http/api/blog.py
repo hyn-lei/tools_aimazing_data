@@ -46,3 +46,30 @@ async def get_categories():
         ret.append(value)
 
     return ret
+
+
+@router.get("/posts/{slug}/navs", dependencies=[Depends(get_db_blog)])
+async def get_navs(slug: str):
+    sql = f"""
+    select slug, prev_slug, prev_title,next_slug,next_title
+    from (
+        select  slug,
+                lag(slug) over (order by id desc) as prev_slug,
+                lag(title) over (order by id desc) as prev_title,
+                lead(slug) over (order by id desc) as next_slug,
+                lead(title) over (order by id desc) as next_title
+        from posts
+        ) x
+    where slug ='{slug}';
+    """
+    rows = db_blog.execute_sql(sql).fetchall()
+    if not rows:
+        return {}
+    row = rows[0]
+    slug = row[0]
+
+    return {
+        "slug": slug,
+        "prev": {"slug": row[1], "title": row[2]},
+        "next": {"slug": row[3], "title": row[4]},
+    }
