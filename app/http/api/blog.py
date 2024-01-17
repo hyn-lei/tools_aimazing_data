@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends
 
 from app.http.deps import get_db_blog
@@ -73,3 +75,40 @@ async def get_navs(slug: str):
         "prev": {"slug": row[1], "title": row[2]},
         "next": {"slug": row[3], "title": row[4]},
     }
+
+
+@router.post("/posts/{slug}/view_counts", dependencies=[Depends(get_db_blog)])
+async def update_read_count(slug: str):
+    if not slug:
+        return {"result": False}
+
+    sql = f"""
+    update posts set view_count = view_count+1 where slug='{slug}'
+    """
+    # logging.info(sql)
+    rows = db_blog.execute_sql(sql=sql)
+    logging.info(f"{rows}")
+
+    return {"result": True}
+
+
+@router.get("/posts/{slug}/relations", dependencies=[Depends(get_db_blog)])
+async def get_related(slug: str, limit: int):
+    """
+    没用了
+    """
+    sql = f"""
+    SELECT ps.slug, ps.title, ps.feature_image, ps.updated_at, cts.name, cts.slug
+    FROM posts ps
+             JOIN posts_post_categories ps_cts ON ps.id = ps_cts.posts_id
+             JOIN post_categories cts ON cts.id = ps_cts.post_categories_id
+    WHERE cts.slug = '{slug}'
+    order by updated_at desc
+    LIMIT {limit};
+    """
+    rows = db_blog.execute_sql(sql).fetchall()
+    if not rows:
+        return []
+    ret = []
+
+    return ret
