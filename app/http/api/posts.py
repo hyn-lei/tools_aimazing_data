@@ -35,6 +35,7 @@ async def add(request: Request):
     data = await request.json()
     logging.info(data)
     medium_id = data.get("medium_id")
+    auto_translate = data.get("auto_translate")
 
     content = data.get("content")
     if not medium_id and not content:
@@ -52,7 +53,7 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    executor.submit(lambda: Post.add(medium_id, content))
+    executor.submit(lambda: Post.add(medium_id, content, auto_translate))
     # result = Post.add(medium_id, content)
 
     return {"result": True}
