@@ -35,9 +35,9 @@ class Post(BaseModel):
         if auto_translate:
             title, summary, content_zh = ai_handle(content)
         else:
-            title = ""
-            summary = ""
-            content_zh = ""
+            title = "no title"
+            summary = "no content"
+            content_zh = "no content"
 
         # start db，需要在 ai 接口调用之后执行，而不是在 api 接口层（ai 接口调用之前执行）
         logger = logging.getLogger(__name__)
