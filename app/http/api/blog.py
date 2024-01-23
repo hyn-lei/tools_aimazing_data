@@ -60,7 +60,7 @@ async def get_navs(slug: str):
                 lag(title) over (order by id desc) as prev_title,
                 lead(slug) over (order by id desc) as next_slug,
                 lead(title) over (order by id desc) as next_title
-        from posts
+        from posts where status='published'
         ) x
     where slug ='{slug}';
     """
