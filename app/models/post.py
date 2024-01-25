@@ -35,7 +35,7 @@ class Post(BaseModel):
         if auto_translate:
             title, summary, content_zh = ai_handle(content)
         else:
-            title = "no title"
+            title = f"no title {now}"
             summary = "no content"
             content_zh = "no content"
 
