@@ -1,5 +1,5 @@
 APScheduler~=3.10.1
-fastapi~=0.94.1
+fastapi~=0.109.0
 jose~=1.0.0
 loguru~=0.6.0
 peewee~=3.16.0
