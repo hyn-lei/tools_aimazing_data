@@ -3,7 +3,7 @@ fastapi~=0.94.1
 jose~=1.0.0
 loguru~=0.6.0
 peewee~=3.16.0
-starlette~=0.26.1
+starlette~=0.35.1
 uvicorn~=0.21.0
 pymysql
 passlib[bcrypt]
@@ -19,8 +19,8 @@ revChatGPT
 
 deepl
 
-langchain~=0.0.340
+langchain~=0.1.1
 
-openai~=1.3.5
+langchain-openai
 
 retry

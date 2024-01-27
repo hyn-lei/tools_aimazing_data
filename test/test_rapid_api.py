@@ -3,6 +3,9 @@ import json
 import logging
 from datetime import datetime
 
+from langchain.agents.openai_assistant import OpenAIAssistantRunnable
+from langchain_openai import OpenAI
+from langchain_openai.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
@@ -143,7 +146,7 @@ def langchain_instruct(system_message: str, content: str, cb):
         # streaming=True,
         # callbacks=cb,
         api_key=settings.OPENAI_KEY,
-        timeout=300,
+        timeout=900,
     )
 
     if cb:
@@ -173,6 +176,34 @@ def langchain_instruct(system_message: str, content: str, cb):
         ret += r.get("text")
 
     return ret
+
+
+from langchain.prompts import PromptTemplate
+from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+
+
+def generate_image(content: str):
+    llm = OpenAI(temperature=0.9)
+    prompt = PromptTemplate(
+        input_variables=["image_desc"],
+        template="Generate a detailed, 800 words limited prompt to generate an image based on the following description: {image_desc}",
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+
+    # query = chain.run("halloween night at a haunted museum")
+    query = """
+    a simple, modern style image, about "a website named, digital dispatch, who providing tech information"
+    """
+    image_url = DallEAPIWrapper().run(query)
+    return image_url
+
+
+def langchain_assistant(content: str, cb):
+    agent = OpenAIAssistantRunnable(
+        assistant_id="asst_Ig4goZMDnmnVuStbAJrpy7Zg", as_agent=True
+    )
+    output = agent.invoke({"content": content})
+    return output
 
 
 def langchain_translate(content: str, cb):
@@ -253,9 +284,6 @@ def langchain_percentage_quiz(content_):
 
     data_ = langchain_percentage_quiz_internal(topic=content_)
     return data_
-
-
-from langchain.chat_models import ChatOpenAI
 
 
 @retry(
@@ -342,7 +370,7 @@ if __name__ == "__main__":
     # result = langchain_percentage_chat(
     #     "what about 40% of 40$ item", [StreamingStdOutCallbackHandler()]
     # )
-    result = langchain_percentage_quiz("20 to 40")
+    # result = langchain_percentage_quiz("20 to 40")
     # # result = test3()
     # callbacks = [ChainStreamHandler()]
 
@@ -353,4 +381,239 @@ if __name__ == "__main__":
     # executor = ThreadPoolExecutor(max_workers=5)
     # executor.submit(lambda: langchain_translate(text, None))
     # result = True
-    print(f"call result:{result}.")
+    # print(f"call result:{result}.")
+
+    text = """
+    # 25 Killer Websites for Web Developers You Should Know About
+
+### 99.9% of developers don't know all of them.
+
+![Photo by [KOBU Agency](https://unsplash.com/@kobuagency?utm_source=medium&utm_medium=referral) on [Unsplash](https://unsplash.com?utm_source=medium&utm_medium=referral)](https://miro.medium.com/0*0_WMfdYIgDf-Xmjy)
+
+## Preface
+
+I would like to share with you some useful websites that can improve your productivity: some can help you write articles, and some can help you with design. Let's take a look now.
+
+---
+
+## 1. Create and share beautiful images for your source code
+
+[Link](https://carbon.now.sh/)
+
+Use [Carbon](https://carbon.now.sh/) to create and share beautiful images of your source code. It provides a variety of code styles and themes.
+
+![](https://miro.medium.com/1*cd6Mp5t356tW9erjyCcmXg.png)
+
+## 2. JavaScript Regular Expression visualizer
+
+[Link](https://jex.im/regulex/#!flags=&re=(((%3F%3D.*%5Cd)((%3F%3D.*%5Ba-z%5D)%7C(%3F%3D.*%5BA-Z%5D)))%7C(%3F%3D.*%5Ba-z%5D)(%3F%3D.*%5BA-Z%5D))%5E%5Ba-zA-Z%5Cd%5D%7B6%2C12%7D%24)
+
+Are you the kind of person who doesn't want to learn regex expressions because it looks complicated? Don't worry, I used to be the same but not anymore. [A visualization tool](https://jex.im/regulex/#!flags=&re=(((%3F%3D.*%5Cd)((%3F%3D.*%5Ba-z%5D)%7C(%3F%3D.*%5BA-Z%5D)))%7C(%3F%3D.*%5Ba-z%5D)(%3F%3D.*%5BA-Z%5D))%5E%5Ba-zA-Z%5Cd%5D%7B6%2C12%7D%24) makes regular expressions easier to understand.
+
+![](https://miro.medium.com/1*xKj2CDhy3ooWmsOZD4Wgzw.png)
+
+## 3. Random Image
+
+[Link](https://unsplash.com/)
+
+The internet's source of freely-usable images. Powered by creators everywhere.
+
+![](https://miro.medium.com/1*EQVE5zPx47nwFBPfzrwIOA.png)
+
+## 4. Smart WebP, PNG and JPEG compression
+
+[Link](https://tinypng.com/)
+
+You may often need to compress images, [tinypng](https://tinypng.com/) is free to use and the compressed images have high definition.
+
+![](https://miro.medium.com/1*1DhxzLoPYYPsoQ69PZaTbA.png)
+
+## 5. CodePen
+
+[Link](https://codepen.io/)
+
+Using CodePen will make it very convenient to embed demo code on Medium, like in this example.
+
+<iframe src="https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fcodepen.io%2Farcs%2Fembed%2Fpreview%2FXKKYZW%3Fdefault-tabs%3Djs%252Cresult%26height%3D600%26host%3Dhttps%253A%252F%252Fcodepen.io%26slug-hash%3DXKKYZW&display_name=CodePen&url=https%3A%2F%2Fcodepen.io%2Farcs%2Fpen%2FXKKYZW&image=https%3A%2F%2Fshots.codepen.io%2Fusername%2Fpen%2FXKKYZW-512.jpg%3Fversion%3D1529499586&key=a19fcc184b9711e1b4764040d3dc5c07&type=text%2Fhtml&schema=codepen" title="" height="600" width="800"></iframe>
+
+## 6. Open source icons
+
+[Link](https://ionic.io/)
+
+You can find any icon you need from [Ionic](https://ionic.io/), including premium-designed icons for use on web, iOS, Android, and desktop apps. Support for SVG and web font. Completely open-source, Ionic.
+
+![](https://miro.medium.com/1*wNWTVGJEfiOPYRcWhXqeDA.png)
+
+## 7. A super practical palette
+
+[Link](https://colorhunt.co/palettes/pastel)
+
+Could not find the right colour when you were designing? [Color Hunt](https://colorhunt.co/palettes/pastel) can help us.
+
+![](https://miro.medium.com/1*HE89jtj9VIQ7DIB01NfkNw.png)
+
+## 8. Can I use?
+
+[Link](https://caniuse.com/)
+
+Front-end engineers often need to check browser compatibility, [Can I use](https://caniuse.com/) is a website that can query the features and compatibility of CSS and JavaScript in various popular browsers.
+
+![](https://miro.medium.com/1*nVgUgX7gyaTebK3Z5iYtyA.png)
+
+## 9. GitHub Desktop
+
+[Link](https://desktop.github.com/)
+
+If you are not familiar with git, you will like it very much.
+
+(from [desktop](https://desktop.github.com/))Focus on what matters instead of fighting with Git. Whether you're new to Git or a seasoned user, GitHub Desktop simplifies your development workflow.
+
+![](https://miro.medium.com/0*n9OuTRQ1BLbuC-_t.png)
+
+## 10. Animate.css
+
+[Link](https://animate.style/)
+
+As a front-end development engineer, do you need to write animations often? Oh! I don't have any advantage in animation but luckily `Animate.css` helps me to solve most of my problems.
+
+We can find a lot of interesting and useful animation clips here.
+
+![](https://miro.medium.com/0*DMDVfBQnBnoQtq6N.gif)
+
+## 11. boardmix.com
+
+I really like this site because I can draw mind maps, flowcharts and all other graphic-related things on it.
+
+![](https://miro.medium.com/0*RhCA2t7_zeJfS0ZT.png)
+
+## 12. Web Gradients
+
+[Link](https://webgradients.com/)
+
+A place to add beautiful gradients to your website.
+
+![](https://miro.medium.com/0*zYr_GfNj8un1et3Q.png)
+
+## 13. 3Dicons
+
+[Link](https://3dicons.co/?ref=usniemvuilaptrinh)
+
+(from [3Dicons](https://3dicons.co/?ref=usniemvuilaptrinh))Beautifully crafted open source 3D icons100% FREE FOR COMMERCIAL AND PERSONAL USE UNDER CC0
+
+![](https://miro.medium.com/0*4klz6T3zsZuFeZ-M.png)
+
+## 14. Standard Resume
+
+[Link](https://standardresume.co/?ref=usniemvuilaptrinh)
+
+Whenever I want to change jobs, I think of it because it creates a beautiful and responsive resume for me.
+
+![](https://miro.medium.com/0*NtW0uxrtY7J2Z01Q.png)
+
+## 15. `codetogo`
+
+[Link](https://codetogo.io/how-to-sum-items-of-array-in-javascript/)
+
+Codetogo can help us quickly find some common problems in website development, which is very efficient and accurate. For example：["How to sum items of array in JavaScript?"](https://codetogo.io/how-to-sum-items-of-array-in-javascript/)
+
+![](https://miro.medium.com/0*zPEwM_-U130wwtHV.png)
+
+## 16. The best code generators for developers
+
+[Link](https://webcode.tools/?ref=usniemvuilaptrinh)
+
+We can use it to generate HTML, CSS, etc.
+
+![](https://miro.medium.com/0*uUmKTkTzvLIl_7zL.png)
+
+## 17. Unused CSS
+
+[Link](https://unused-css.com/?ref=usniemvuilaptrinh)
+
+Remove Unused CSS , Easily Clean Up Your Unused CSS Rules.
+
+![](https://miro.medium.com/0*aq2r8KG6LOz4okHe.png)
+
+## 18. Cool Backgrounds
+
+[Link](https://coolbackgrounds.io/?ref=usniemvuilaptrinh)
+
+It can help us create beautiful background pictures.
+
+![](https://miro.medium.com/1*JkSyykjWPHibYuZmgoOLmQ.png)
+
+## 19. DevDocs
+
+[Link](https://devdocs.io/)
+
+This [website](https://devdocs.io/) has documentation for various projects and also supports offline use.
+
+![](https://miro.medium.com/1*ZT6MEr1lUOYzSpLOfx1hEQ.png)
+
+## 20. cdnjs
+
+[Link](https://cdnjs.com/)
+
+Sometimes we need online resources for programming practice. [cdnjs](https://cdnjs.com/) can help us find almost all open-source libraries.
+
+![](https://miro.medium.com/1*9uWM8PtAdiuZ3BjDCIsgVA.png)
+
+## 21. Remove Image Background
+
+[Link](https://www.remove.bg/)
+
+This website can help us delete the image background 100% automatically and for free.
+
+![](https://miro.medium.com/1*mq0rZ69dCzsuonqJ-FHkyw.png)
+
+## 22. Readme
+
+[Link](https://readme.so/editor)
+
+The easiest way to create a README file, this simple editor allows you to quickly add and customize all the sections you need for your project's readme.
+
+![](https://miro.medium.com/1*1t1QvQ1yLq3ipRdHu4WIDg.png)
+
+## 23. How fast does your website load?
+
+[Link](https://gtmetrix.com/)
+
+See how your website is performing, reveal why it's slow, and spot optimization opportunities.
+
+![](https://miro.medium.com/1*r1XcRROi8UtyRI16o9vDZg.png)
+
+## 24. Edit pictures online
+
+[Link](https://www.photopea.com/)
+
+Do you need pictures to write an article? Images can be designed online through this website.
+
+![](https://miro.medium.com/1*G5qiF56Klm56yIFpWE4S5w.png)
+
+## 25. Royalty-free illustrations
+
+[Link](https://www.manypixels.co/gallery)
+
+2,500+ royalty-free illustrations to power up your designs.
+
+![](https://miro.medium.com/1*Yp0fOXOALNwlLNUfwGy8mw.png)
+
+## Finally
+
+**Thanks for reading.** I am looking **** forward to your following and reading more high-quality articles.
+
+> [**Interviewer: What Happened to "npm run xxx"?**](https://javascript.plainenglish.io/interviewer-what-happened-to-npm-run-xxx-cdcb37dbaf44)
+
+> [**20 JavaScript Array Methods Every Developer Should Know**](https://javascript.plainenglish.io/20-javascript-array-methods-every-developer-should-know-6c04cc7a557d)
+
+> [**8 Cool GitHub Tricks To Make You Look Like A Senior Developer**](https://javascript.plainenglish.io/8-cool-github-tricks-to-make-you-look-like-a-senior-developer-ab8fe9ae9b14)
+
+> [**Interviewer: Can "x !== x" Return True in JavaScript？**](https://javascript.plainenglish.io/interviewer-can-x-x-return-true-in-javascript-7e1d1fa7b5cd)
+
+> [**What does (123[‘toString'].length + 123) Print Out in JavaScript?**](https://javascript.plainenglish.io/what-does-123-tostring-length-123-print-out-in-javascript-2c804a414325)
+   """
+    result = langchain_assistant(content=text, cb=None)
+    # result = generate_image("")
+    print(datetime.now())
+    print(result)
+    print(result.return_values["output"])
