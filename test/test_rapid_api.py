@@ -242,7 +242,7 @@ def langchain_percentage_chat_internal(topic, cb=None):
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k",
         # model_name="gpt-4-0613",
-        temperature=0.7,
+        temperature=0.3,
         # streaming=True,
         # callbacks=[StreamingStdOutCallbackHandler()],
         openai_api_key=settings.OPENAI_KEY,
@@ -254,8 +254,8 @@ def langchain_percentage_chat_internal(topic, cb=None):
         llm.callbacks = cb
 
     system_message = """
-    You are a helpful assistant that only answer question about percentage calculation in natural language. 
-    1. Only output calculate percentage steps.
+    You are a helpful assistant that only answer question about percentage related calculation in natural language. 
+    1. Only output calculate steps.
     2. Just output the 7 letters "UNKNOWN" without any further explanation if you don't understand what I'm saying or are not sure how to convert my instructions into percentage calculation steps.
     """
 
