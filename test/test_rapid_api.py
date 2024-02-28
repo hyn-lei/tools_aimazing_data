@@ -304,7 +304,7 @@ def langchain_percentage_quiz_internal(topic, cb=None):
         llm.callbacks = cb
 
     system_message = """
-    Generate 3 percentage questions, the answer, and the calculation steps related to the following topic, and output only the json data. 
+    Generate 3 percentage questions/quizzes, including the answer, and the calculation steps related to the following topic, and output only the json data. 
     
     The JSON data structure is as follows:
     [
@@ -325,7 +325,7 @@ def langchain_percentage_quiz_internal(topic, cb=None):
 
     system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
 
-    human_template = "{text}"
+    human_template = "The topic is: {text}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
     chat_prompt = ChatPromptTemplate.from_messages(
