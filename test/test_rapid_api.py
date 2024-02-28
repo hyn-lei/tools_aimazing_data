@@ -242,7 +242,7 @@ def langchain_percentage_chat_internal(topic, cb=None):
     llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-16k",
         # model_name="gpt-4-0613",
-        temperature=0.3,
+        temperature=0.5,
         # streaming=True,
         # callbacks=[StreamingStdOutCallbackHandler()],
         openai_api_key=settings.OPENAI_KEY,
@@ -296,7 +296,10 @@ def langchain_percentage_quiz(content_):
 )
 def langchain_percentage_quiz_internal(topic, cb=None):
     llm = ChatOpenAI(
-        model="gpt-3.5-turbo-16k", api_key=settings.OPENAI_KEY, timeout=300
+        model="gpt-3.5-turbo-16k",
+        api_key=settings.OPENAI_KEY,
+        timeout=300,
+        temperature=0.3,
     )
     # streaming result if needed
     if cb:
