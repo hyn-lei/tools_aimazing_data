@@ -5,6 +5,7 @@ import requests
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
+from app.http.api.doc_pages import content_medium
 from app.models.post import Post
 
 from concurrent.futures import ThreadPoolExecutor
@@ -12,22 +13,6 @@ from concurrent.futures import ThreadPoolExecutor
 router = APIRouter(prefix="/posts")
 
 executor = ThreadPoolExecutor(max_workers=5)
-
-
-def content_medium(id: str):
-    url = f"https://medium2.p.rapidapi.com/article/{id}/markdown"
-
-    headers = {
-        "X-RapidAPI-Key": "07a05c759fmshd0cd5e0712bed8ap19e6a0jsn8c3d0b8d1654",
-        "X-RapidAPI-Host": "medium2.p.rapidapi.com",
-    }
-
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        return None
-
-    data = response.json()
-    return data.get("markdown")
 
 
 @router.post("/")
