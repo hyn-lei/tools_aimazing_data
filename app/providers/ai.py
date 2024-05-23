@@ -73,7 +73,7 @@ class Ai:
     chatbot = None
     max_tokens = 16385
     tiktoken_divide_word = 3.5
-    model = "gpt-3.5-turbo-16k-0613"
+    model = "gpt-3.5-turbo"
 
     def __init__(self):
         # self.chatbot = Chatbot(
@@ -189,6 +189,9 @@ def ai_handle(content: str):
         # content_zh = streaming.get_result()
 
         content_zh = langchain_translate(content, None)
+        # 图片域名替换
+        content_zh = content_zh.replace("miro.medium.com", "auto.aimazing.site/medium")
+
     except Exception as e:
         error = traceback.format_exc()
         logging.exception("AI翻译出错")
