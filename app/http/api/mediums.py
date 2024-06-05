@@ -4,7 +4,6 @@ from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
 from app.http.api.doc_pages import content_medium
-from app.providers.ai import ai_handle
 
 router = APIRouter(prefix="/mediums")
 
