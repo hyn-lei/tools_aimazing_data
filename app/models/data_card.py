@@ -8,7 +8,7 @@ from app.providers.database import db
 import logging
 
 from config.config import settings
-from test.test_rapid_api import langchain_summarize
+from test.test_rapid_api import langchain_summarize, langchain_translate
 
 
 class DataCard(Model):
@@ -78,6 +78,7 @@ class DataCard(Model):
         if summarize:
             # sum_content = cls.ai.summarize(read_me_content)
             sum_content = langchain_summarize(read_me_content, None)
+            # sum_content = langchain_translate(read_me_content, None)
             logging.info(f"ai working: {sum_content}")
             if sum_content:
                 kw["details"] = sum_content
