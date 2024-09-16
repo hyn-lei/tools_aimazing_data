@@ -7,7 +7,7 @@ starlette~=0.35.1
 uvicorn~=0.21.0
 pymysql
 passlib[bcrypt]
-pydantic[dotenv]
+pydantic>=1.4.0,<2
 python-jose[cryptography]
 
 requests
