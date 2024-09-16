@@ -412,6 +412,180 @@ bash <(curl -s https://raw.githubusercontent.com/Yidadaa/ChatGPT-Next-Web/main/s
 
 [MIT](https://opensource.org/license/mit/)
     """
+
+    content="""
+    # OpenAI's o1 Model is Finally Here - A Model that Thinks Hard Before it Responds
+
+![Image by [Jim Clyde Monge](None)](https://miro.medium.com/1*5OF855NaKh1xfa3PwaziVA.jpeg)
+
+After months of teasing on social media and hiding behind the codename "[Project Strawberry](https://generativeai.pub/whats-with-sam-altman-s-strawberry-tweet-a-hint-to-gpt-5-release-88e57ced8fa2)," the highly anticipated new language [model](https://openai.com/index/introducing-openai-o1-preview/) from OpenAI is finally here - it's called '**o1**'.
+
+It's a bit unconventional that they didn't name it GPT-5 or GPT-4.1. So, why did they go with o1?
+
+According to OpenAI, the advancements in these new models are so significant that they felt the need to reset the counter back to 1:
+
+> But for complex reasoning tasks this is a significant advancement and represents a new level of AI capability. Given this, we are resetting the counter back to 1 and naming this series OpenAI o1.
+
+The main focus of these models is to **think and reason through complex tasks and solve harder problems**. So, don't expect it to be lightning-fast; instead, it delivers better and more logical answers than previous models.
+
+The o1 family of models come in two variants: **o1-mini and the o1-preview.**
+
+- **o1-preview:** This is model preview of the most advanced and most capable official o1 model that's to be released in the future. o1 significantly advances the state-of-the-art in AI reasoning.
+
+- **o1-mini:** This is a faster, cheaper reasoning model that is particularly effective at coding. As a smaller model, o1-mini is 80% cheaper than o1-preview, making it a powerful, cost-effective model for applications that require reasoning but not broad world knowledge.
+
+OpenAI emphasizes that these new models are trained with reinforcement learning to perform complex reasoning. But what exactly does reasoning mean in the context of LLMs?
+
+### How Does Reasoning Work?
+
+Much like how humans ponder for a while before answering a difficult question, o1 uses a **chain of thought** when attempting to solve a problem.
+
+> It learns to recognize and correct its mistakes. It learns to break down tricky steps into simpler ones. It learns to try a different approach when the current one isn't working.
+
+The key point is that reasoning allows the model to consider multiple approaches before generating final response.
+
+**Here's the process:**
+
+1. Generate reasoning tokens
+
+2. Produce visible completion tokens as answer
+
+3. Discard reasoning tokens from context
+
+Discarding reasoning tokens keeps context focused on essential information.
+
+![Image from OpenAI](https://miro.medium.com/0*F30rCHFGXooL-ssF.png)
+
+> **Note:** While reasoning tokens are not visible via the API, they still occupy space in the model's context window and are billed as [output tokens](https://openai.com/pricing).
+
+This approach may be slow but according to NVIDIA's senior researcher, Jim Fan, we are finally seeing the paradigm of inference-time scaling popularized and deployed in production.
+
+![Image from Jim Fan](https://miro.medium.com/0*BdauKrF0NGbdjpfF)
+
+Jim makes some excellent points:
+
+1. **You don't need a huge model to perform reasoning.** Lots of parameters are dedicated to memorizing facts, in order to perform well in benchmarks like trivia QA. It is possible to factor out reasoning from knowledge, i.e. a small "reasoning core" that knows how to call tools like browser and code verifier. Pre-training compute may be decreased.
+
+2. **A huge amount of compute is shifted to serving inference instead of pre/post-training.** LLMs are text-based simulators. By rolling out many possible strategies and scenarios in the simulator, the model will eventually converge to good solutions. The process is a well-studied problem like AlphaGo's monte carlo tree search (MCTS).
+
+### How Does o1 Compare to GPT-4o?
+
+To test how o1 models stack up against GPT-4o, OpenAI performed a diverse set of human exams and ML benchmarks.
+
+![Image from OpenAI](https://miro.medium.com/1*BTydTfMF9dRHv3YSrkhSjg.png)
+
+The graph above demonstrates that o1 greatly improves over GPT-4o on challenging reasoning benchmarks involving math, coding, and science questions.
+
+In evaluating OpenAI's newly released o1 models, OpenAI discovered that they excel on the GPQA-diamond benchmark - a challenging intelligence test that assesses expertise in chemistry, physics, and biology.
+
+To compare the model's performance to that of humans, OpenAI collaborated with experts holding PhDs who answered the same GPQA-diamond questions.
+
+Remarkably, o1 surpassed these human experts, becoming the first model to do so on this benchmark. While this doesn't imply that o1 is superior to a PhD in all respects, it does indicate that the model is more proficient in solving certain problems that a PhD would be expected to solve.
+
+You can read more about the technical report of o1 models [here](https://openai.com/index/learning-to-reason-with-llms/).
+
+---
+
+Now, to see how well o1 performs compared to the previous model, GPT-4o, let's look at a classic problem: counting the number of 'r's in the word "strawberry."
+
+> Prompt: How many 'r' letter are in the word strawberry?
+
+![](https://miro.medium.com/1*IDi8OxtftoM4PHqWE9G-WQ.png)
+
+- o1 took 33 seconds and 296 tokens to solve it, answering correctly.
+
+- GPT-4o took less than a second, consumed 39 tokens, but failed the test.
+
+Let's try another one. This time, we'll ask both models to come up with a list of countries with the letter 'A' in the third position in their names.
+
+> Prompt: Give me 5 countries with letter A in the third position in the name
+
+![Image by [Jim Clyde Monge](None)](https://miro.medium.com/1*ubYLGTIb7gHVUxkweKeb9w.png)
+
+Again, o1 answered correctly, despite taking longer to 'think' than GPT-4o.
+
+### o1 is Not Perfect
+
+Even Sam Altman acknowledged that o1 is still flawed and limited. It might seem more impressive on first use than it does after you spend more time with it.
+
+<iframe src="https://cdn.embedly.com/widgets/media.html?type=text%2Fhtml&key=d04bfffea46d4aeda930ec88cc64b87c&schema=twitter&url=https%3A//x.com/sama/status/1834283100639297910&image=" title="" height="281" width="500"></iframe>
+
+Sometimes, it can still make mistakes - even on simple questions like asking how many 'r's are in its response.
+
+![Image by [Jim Clyde Monge](None)](https://miro.medium.com/0*QeqqWodboj5TPVnB)
+
+Another thing to note is that o1 models offer significant advancements in reasoning but are **not intended to replace GPT-4o in all use cases.**
+
+For applications that need image inputs, function calling, or consistently fast response times, the GPT-4o and GPT-4o mini models will continue to be the right choice.
+
+For developers, here are some of o1's chat completion API parameters that are not yet available:
+
+- **Modalities**: text only, images are not supported.
+
+- **Message types**: user and assistant messages only, system messages are not supported.
+
+- **Streaming**: not supported.
+
+- **Tools**: tools, function calling, and response format parameters are not supported.
+
+- **Logprobs**: not supported.
+
+- **Other**: `temperature`, `top_p` and `n` are fixed at `1`, while `presence_penalty` and `frequency_penalty` are fixed at `0`.
+
+- **Assistants and Batch**: these models are not supported in the Assistants API or Batch API.
+
+### How to Get Access to o1 Model?
+
+o1 is rolling out today in ChatGPT to all Plus and Team users, and in the API for developers on tier 5.
+
+If you're a free ChatGPT user, OpenAI mentioned that they're planning to bring o1-mini access to all ChatGPT Free users, but no specific schedule was provided.
+
+o1 is also available in the OpenAI Playground. Just login to [https://platform.openai.com/](https://platform.openai.com/) and under the Playground tab, set the model to either "o1-mini" or "o1-preview".
+
+![Image by [Jim Clyde Monge](None)](https://miro.medium.com/1*OPHxvFd4hJhOMNC0iZUcGA.png)
+
+There's also the API models "o1-mini-2024–09–12" and the "o1-preview-2024–09–12" which are already accessible to developers.
+
+### Prompting Tips for o1 Models
+
+If you're used to your usual prompting with models like Claude 3.5 Sonnet, Gemini Pro, or GPT-4o, prompting o1 models is different.
+
+o1 models perform best with straightforward prompts. Some prompt engineering techniques, like few-shot prompting or instructing the model to "think step by step," may not enhance performance and can sometimes hinder it.
+
+Check out some best practices:
+
+- **Keep prompts simple and direct:** The models excel at understanding and responding to brief, clear instructions without the need for extensive guidance.
+
+- **Avoid chain-of-thought prompts:** Since these models perform reasoning internally, prompting them to "think step by step" or "explain your reasoning" is unnecessary.
+
+- **Use delimiters for clarity:** Use delimiters like triple quotation marks, XML tags, or section titles to clearly indicate distinct parts of the input, helping the model interpret different sections appropriately.
+
+- **Limit additional context in retrieval-augmented generation (RAG):** When providing additional context or documents, include only the most relevant information to prevent the model from overcomplicating its response.
+
+---
+
+### Final Thoughts
+
+Okay, so o1 is impressive when it comes to chat-based problem-solving and content generation. But do you know what I'm most excited about? Its integration into coding assistants like [Cursor AI](https://generativeai.pub/8-year-old-kids-can-now-builds-apps-with-the-help-of-ai-118122d1f226).
+
+I've already seen folks plugging in their API keys into Cursor and using o1 to write code for them. I haven't tried it yet, but I'm super excited to give it a go.
+
+From my initial tests, o1's ability to think, plan, and execute is off the charts. We're basically witnessing a ChatGPT moment for agentic coding systems. The implications of its new capabilities are immense.
+
+I genuinely believe that the wave of brand-new products that will be built with this will be unlike anything we've ever seen. The new possibilities in the world of software development are thrilling, and I can't wait to see how o1 will revolutionize the way we code and build applications in the coming weeks.
+
+![](https://miro.medium.com/0*6yLyHPUmfW6MNH9P.png)
+
+This story is published on [Generative AI](https://generativeai.pub/). Connect with us on [LinkedIn](https://www.linkedin.com/company/generative-ai-publication) and follow [Zeniteq](https://www.zeniteq.com/) to stay in the loop with the latest AI stories.
+
+Subscribe to our [newsletter](https://www.generativeaipub.com/) and [YouTube](https://www.youtube.com/@generativeaipub) channel to stay updated with the latest news and updates on generative AI. Let's shape the future of AI together!
+
+![](https://miro.medium.com/0*0WfTvugMhfFfyWUK.png)
+
+    
+    
+    """
     print(len(content))
-    result = Ai().summarize(content)
+    # result = Ai().summarize(content)
+    result = ai_handle(content)
     print(result)
