@@ -18,6 +18,7 @@ async def post(request: Request):
 
     medium_id = data.get("medium_id")
     content = content_medium(medium_id)
+    content = content.replace("miro.medium.com", "auto.aimazing.site/medium")
 
     if not content:
         return JSONResponse(status_code=400, content='{"error": "request invalid"}')
