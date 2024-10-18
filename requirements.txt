@@ -3,11 +3,12 @@ fastapi~=0.109.0
 jose~=1.0.0
 loguru~=0.6.0
 peewee~=3.16.0
-starlette~=0.35.1
-uvicorn~=0.21.0
+starlette~=0.36.0
+uvicorn
 pymysql
 passlib[bcrypt]
-pydantic>=1.4.0,<2
+pydantic
+pydantic-settings
 python-jose[cryptography]
 
 requests

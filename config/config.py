@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings, Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -16,10 +16,11 @@ class Settings(BaseSettings):
     URL: str = "http://localhost"
     TIME_ZONE: str = "RPC"
     GITHUB_TOKEN: str = ''
-    OPENAI_KEY = ''
-    DEEPL_KEYS:list = None
+    OPENAI_KEY: str = ''
+    DEEPL_KEYS: list = None
 
     class Config:
+        extra = "allow"
         env_prefix = 'APP_'
         env_file = ".env"
         env_file_encoding = 'utf-8'

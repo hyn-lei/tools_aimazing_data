@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from config.config import settings as app_settings
 
 """
@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     LOG_RETENTION: str = "14 days"
 
     class Config:
+        extra = "allow"
         env_file = ".env"
         env_file_encoding = 'utf-8'
 

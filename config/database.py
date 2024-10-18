@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     PASSWORD: str = '123456'
 
     class Config:
+        extra = "allow"
         env_prefix = 'DB_'
         env_file = ".env"
 
