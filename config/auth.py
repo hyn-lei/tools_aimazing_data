@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = 'HS256'
 
     class Config:
+        extra = "allow"
         env_file = ".env"
         env_file_encoding = 'utf-8'
 
