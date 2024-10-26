@@ -24,4 +24,6 @@ langchain
 
 langchain-openai
 
+langchain_community
+
 retry
