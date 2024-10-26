@@ -1,5 +1,4 @@
-from pydantic import BaseSettings
-
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     JWT_TTL: int = 60 * 24 * 8
