@@ -26,9 +26,10 @@ class DocPage(Model):
     title = CharField()
     summary = CharField()
     slug = CharField()
+    external_id = CharField()
 
     @classmethod
-    def add(cls, content: str):
+    def add(cls, content: str, external_id: str = None):
         title, summary, content_zh = ai_handle(content)
         logger = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ class DocPage(Model):
                 title=title,
                 summary=summary,
                 slug=title,
+                external_id=external_id,
             )
 
         # insert

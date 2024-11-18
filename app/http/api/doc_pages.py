@@ -47,7 +47,7 @@ async def add(request: Request):
     logging.info(f"content: {content}")
 
     # translate and insert
-    executor.submit(lambda: DocPage.add(content))
+    executor.submit(lambda: DocPage.add(content, medium_id))
     # result = DocPage.add(content)
 
     return {"result": True}
