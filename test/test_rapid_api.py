@@ -141,7 +141,7 @@ def langchain_instruct(system_message: str, content: str, cb):
     # 加载 llm 模型
     llm = ChatOpenAI(
         # model_name="gpt-3.5-turbo-instruct-0914",
-        model="gpt-4o-mini",
+        model="gpt-4o",
         temperature=0,
         # streaming=True,
         # callbacks=cb,
