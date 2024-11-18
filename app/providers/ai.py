@@ -7,7 +7,7 @@ from langchain.callbacks import StreamingStdOutCallbackHandler
 from openai import OpenAI
 
 from config.config import settings
-from test.test_rapid_api import langchain_translate, langchain_summarize
+from test.test_rapid_api import langchain_translate, langchain_summarize, json_schema
 
 client = OpenAI(api_key=settings.OPENAI_KEY)
 
@@ -207,7 +207,7 @@ def ai_handle(content: str):
         # langchain_summarize(content_zh, [streaming])
         # s_data = streaming.get_result()
 
-        j_data = langchain_summarize(content_zh, None)
+        j_data = langchain_summarize(content_zh, schema=json_schema)
     except Exception as e:
         error = "AI总结出错" + traceback.format_exc()
         logging.exception("AI总结出错")
