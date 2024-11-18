@@ -76,6 +76,8 @@ print(datetime.now())
 # print(Ai().summarize_in_sentences(text))
 # print(cal_token_count(text))
 print(datetime.now())
+
+
 # result = translator.translate_text(text=text, target_lang="ZH")
 # print(result.text)
 
@@ -146,7 +148,7 @@ json_schema = {
 
 def langchain_instruct(system_message: str, content: str, cb: Callbacks = None, output_schema: str = None):
     # 初始化文本分割器
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10, length_function=len)
 
     # 切分文本
     split_chunks = text_splitter.split_text(content)
