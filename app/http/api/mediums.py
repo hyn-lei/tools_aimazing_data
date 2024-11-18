@@ -11,7 +11,7 @@ router = APIRouter(prefix="/mediums")
 @router.post("/")
 async def post(request: Request):
     """
-    调用ai 做翻译，不做其他
+    获取 medium 数据，不做其他；
     """
 
     data = await request.json()

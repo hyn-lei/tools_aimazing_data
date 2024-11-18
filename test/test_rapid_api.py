@@ -141,7 +141,7 @@ def langchain_instruct(system_message: str, content: str, cb):
     # 加载 llm 模型
     llm = ChatOpenAI(
         # model_name="gpt-3.5-turbo-instruct-0914",
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         temperature=0,
         # streaming=True,
         # callbacks=cb,
@@ -227,8 +227,7 @@ def langchain_translate(content: str, cb):
     
     策略：
     分成两次翻译，并且打印第二次的结果：
-    1. 根据英文内容直译，保持原有格式，不要遗漏任何信息
-    2. 根据第一次直译的结果重新意译，遵守原意的前提下让内容更通俗易懂、符合中文表达习惯，但要保留原有格式不变
+    1. 根据英文内容翻译，遵守原意的前提下让内容更通俗易懂、符合中文表达习惯，但要保留原有格式不变。
     
     现在请翻译以下内容为简体中文：
     
