@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     TIME_ZONE: str = "RPC"
     GITHUB_TOKEN: str = ''
     OPENAI_KEY: str = ''
+    OPENAI_BASE_URL: str = ''
     DEEPL_KEYS: list = None
 
     class Config:

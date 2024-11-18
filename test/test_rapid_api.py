@@ -4,8 +4,9 @@ import logging
 from datetime import datetime
 
 from langchain.agents.openai_assistant import OpenAIAssistantRunnable
+from langchain_core.callbacks import Callbacks
 from langchain_openai import OpenAI
-from langchain_openai.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
@@ -14,7 +15,7 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
     ChatPromptTemplate,
 )
-from langchain.schema import Document, StrOutputParser
+from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from retry import retry
 
@@ -117,7 +118,33 @@ def langchain_test(content: str):
     print(result)
 
 
-def langchain_instruct(system_message: str, content: str, cb):
+from pydantic import BaseModel, Field
+
+
+class Article(BaseModel):
+    title: str = Field(description="符合 Google SEO 标准的标题")
+    summary: str = Field(description="符合 Google SEO 标准的 description")
+
+
+json_schema = {
+    "type": "object",
+    "title": "Article",
+    "description": "Schema for article details",
+    "properties": {
+        "title": {
+            "type": "string",
+            "description": "符合 Google SEO 标准的标题"
+        },
+        "summary": {
+            "type": "string",
+            "description": "符合 Google SEO 标准的 description"
+        }
+    },
+    "required": ["title", "summary"]
+}
+
+
+def langchain_instruct(system_message: str, content: str, cb: Callbacks = None, output_schema: str = None):
     # 初始化文本分割器
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=10)
 
@@ -130,11 +157,8 @@ def langchain_instruct(system_message: str, content: str, cb):
 
     system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
 
-    human_template = "{text}"
-    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-
     chat_prompt = ChatPromptTemplate.from_messages(
-        [system_message_prompt, human_message_prompt]
+        [system_message_prompt, ("human", "{text}")]
     )
 
     logging.info(f"key: {settings.OPENAI_KEY}")
@@ -145,6 +169,7 @@ def langchain_instruct(system_message: str, content: str, cb):
         temperature=0,
         # streaming=True,
         # callbacks=cb,
+        openai_api_base=settings.OPENAI_BASE_URL,
         api_key=settings.OPENAI_KEY,
         timeout=900,
     )
@@ -152,6 +177,12 @@ def langchain_instruct(system_message: str, content: str, cb):
     if cb:
         llm.streaming = True
         llm.callbacks = cb
+        llm.with_structured_output()
+
+    # print(output_schema)
+
+    if output_schema:
+        llm = llm.with_structured_output(output_schema)
 
     print("started...")
     logging.info(f"started: {datetime.now()}")
@@ -160,8 +191,15 @@ def langchain_instruct(system_message: str, content: str, cb):
     # chain = chat_prompt | llm | StrOutputParser
     # result = chain.batch(input_list)
 
-    llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
-    result = llm_chain.apply(input_list)
+    # llm_chain = LLMChain(llm=llm, prompt=chat_prompt)
+    # print(llm_chain)
+    # result = llm_chain.apply(input_list)
+
+    llm_chain = chat_prompt | llm
+    # print(llm_chain)
+    result = llm_chain.batch(input_list)
+    # print(result)
+    # result = llm_chain.invoke(input_list)
     # result = llm_chain.generate(input_list)
     # print(result)
     # print(result[0]["text"])
@@ -171,11 +209,14 @@ def langchain_instruct(system_message: str, content: str, cb):
     if cb:
         pass
 
-    ret = ""
-    for r in result:
-        ret += r.get("text")
+    if output_schema:
+        return result[0]
+    else:
+        ret = ""
+        for r in result:
+            ret += r.content
 
-    return ret
+        return ret
 
 
 from langchain.prompts import PromptTemplate
@@ -235,15 +276,13 @@ def langchain_translate(content: str, cb):
     return langchain_instruct(system_message, content, cb)
 
 
-def langchain_summarize(content: str, cb):
+def langchain_summarize(content: str, cb: Callbacks = None, schema=None):
     system_message = """
-    Write a concise, Google SEO-friendly summary of the following, and output the JSON data. The JSON data structure is as follows:
-
-    {{"title": "Extracted content title in Chinese", "summary": "Summarized content that not more than 300 words in Chinese"}}
-
-    the value of json data is in Chinese, not in English.
+    请为以下内容撰写简洁且符合 Google SEO 的摘要，并以 JSON 格式输出。JSON 数据结构如下：
+        
+    {{"title": "提取的中文内容标题", "summary": "不超过120字的中文内容摘要"}}
     """
-    return langchain_instruct(system_message, content, cb)
+    return langchain_instruct(system_message, content, cb, schema)
 
 
 def langchain_percentage_chat(content_, cb):
@@ -497,150 +536,10 @@ If you are not familiar with git, you will like it very much.
 
 ![](https://miro.medium.com/0*n9OuTRQ1BLbuC-_t.png)
 
-## 10. Animate.css
-
-[Link](https://animate.style/)
-
-As a front-end development engineer, do you need to write animations often? Oh! I don't have any advantage in animation but luckily `Animate.css` helps me to solve most of my problems.
-
-We can find a lot of interesting and useful animation clips here.
-
-![](https://miro.medium.com/0*DMDVfBQnBnoQtq6N.gif)
-
-## 11. boardmix.com
-
-I really like this site because I can draw mind maps, flowcharts and all other graphic-related things on it.
-
-![](https://miro.medium.com/0*RhCA2t7_zeJfS0ZT.png)
-
-## 12. Web Gradients
-
-[Link](https://webgradients.com/)
-
-A place to add beautiful gradients to your website.
-
-![](https://miro.medium.com/0*zYr_GfNj8un1et3Q.png)
-
-## 13. 3Dicons
-
-[Link](https://3dicons.co/?ref=usniemvuilaptrinh)
-
-(from [3Dicons](https://3dicons.co/?ref=usniemvuilaptrinh))Beautifully crafted open source 3D icons100% FREE FOR COMMERCIAL AND PERSONAL USE UNDER CC0
-
-![](https://miro.medium.com/0*4klz6T3zsZuFeZ-M.png)
-
-## 14. Standard Resume
-
-[Link](https://standardresume.co/?ref=usniemvuilaptrinh)
-
-Whenever I want to change jobs, I think of it because it creates a beautiful and responsive resume for me.
-
-![](https://miro.medium.com/0*NtW0uxrtY7J2Z01Q.png)
-
-## 15. `codetogo`
-
-[Link](https://codetogo.io/how-to-sum-items-of-array-in-javascript/)
-
-Codetogo can help us quickly find some common problems in website development, which is very efficient and accurate. For example：["How to sum items of array in JavaScript?"](https://codetogo.io/how-to-sum-items-of-array-in-javascript/)
-
-![](https://miro.medium.com/0*zPEwM_-U130wwtHV.png)
-
-## 16. The best code generators for developers
-
-[Link](https://webcode.tools/?ref=usniemvuilaptrinh)
-
-We can use it to generate HTML, CSS, etc.
-
-![](https://miro.medium.com/0*uUmKTkTzvLIl_7zL.png)
-
-## 17. Unused CSS
-
-[Link](https://unused-css.com/?ref=usniemvuilaptrinh)
-
-Remove Unused CSS , Easily Clean Up Your Unused CSS Rules.
-
-![](https://miro.medium.com/0*aq2r8KG6LOz4okHe.png)
-
-## 18. Cool Backgrounds
-
-[Link](https://coolbackgrounds.io/?ref=usniemvuilaptrinh)
-
-It can help us create beautiful background pictures.
-
-![](https://miro.medium.com/1*JkSyykjWPHibYuZmgoOLmQ.png)
-
-## 19. DevDocs
-
-[Link](https://devdocs.io/)
-
-This [website](https://devdocs.io/) has documentation for various projects and also supports offline use.
-
-![](https://miro.medium.com/1*ZT6MEr1lUOYzSpLOfx1hEQ.png)
-
-## 20. cdnjs
-
-[Link](https://cdnjs.com/)
-
-Sometimes we need online resources for programming practice. [cdnjs](https://cdnjs.com/) can help us find almost all open-source libraries.
-
-![](https://miro.medium.com/1*9uWM8PtAdiuZ3BjDCIsgVA.png)
-
-## 21. Remove Image Background
-
-[Link](https://www.remove.bg/)
-
-This website can help us delete the image background 100% automatically and for free.
-
-![](https://miro.medium.com/1*mq0rZ69dCzsuonqJ-FHkyw.png)
-
-## 22. Readme
-
-[Link](https://readme.so/editor)
-
-The easiest way to create a README file, this simple editor allows you to quickly add and customize all the sections you need for your project's readme.
-
-![](https://miro.medium.com/1*1t1QvQ1yLq3ipRdHu4WIDg.png)
-
-## 23. How fast does your website load?
-
-[Link](https://gtmetrix.com/)
-
-See how your website is performing, reveal why it's slow, and spot optimization opportunities.
-
-![](https://miro.medium.com/1*r1XcRROi8UtyRI16o9vDZg.png)
-
-## 24. Edit pictures online
-
-[Link](https://www.photopea.com/)
-
-Do you need pictures to write an article? Images can be designed online through this website.
-
-![](https://miro.medium.com/1*G5qiF56Klm56yIFpWE4S5w.png)
-
-## 25. Royalty-free illustrations
-
-[Link](https://www.manypixels.co/gallery)
-
-2,500+ royalty-free illustrations to power up your designs.
-
-![](https://miro.medium.com/1*Yp0fOXOALNwlLNUfwGy8mw.png)
-
-## Finally
-
-**Thanks for reading.** I am looking **** forward to your following and reading more high-quality articles.
-
-> [**Interviewer: What Happened to "npm run xxx"?**](https://javascript.plainenglish.io/interviewer-what-happened-to-npm-run-xxx-cdcb37dbaf44)
-
-> [**20 JavaScript Array Methods Every Developer Should Know**](https://javascript.plainenglish.io/20-javascript-array-methods-every-developer-should-know-6c04cc7a557d)
-
-> [**8 Cool GitHub Tricks To Make You Look Like A Senior Developer**](https://javascript.plainenglish.io/8-cool-github-tricks-to-make-you-look-like-a-senior-developer-ab8fe9ae9b14)
-
-> [**Interviewer: Can "x !== x" Return True in JavaScript？**](https://javascript.plainenglish.io/interviewer-can-x-x-return-true-in-javascript-7e1d1fa7b5cd)
-
-> [**What does (123[‘toString'].length + 123) Print Out in JavaScript?**](https://javascript.plainenglish.io/what-does-123-tostring-length-123-print-out-in-javascript-2c804a414325)
    """
     # result = langchain_assistant(content=text, cb=None)
-    result = langchain_translate(content=text, cb=None)
+    # result = langchain_translate(content=text, cb=None)
+    result = langchain_summarize(content=text, schema=json_schema)
     # result = generate_image("")
     print(datetime.now())
     print(result)

@@ -207,18 +207,17 @@ def ai_handle(content: str):
         # langchain_summarize(content_zh, [streaming])
         # s_data = streaming.get_result()
 
-        s_data = langchain_summarize(content_zh, None)
+        j_data = langchain_summarize(content_zh, None)
     except Exception as e:
         error = "AI总结出错" + traceback.format_exc()
         logging.exception("AI总结出错")
         return "error", error, content_zh
 
     try:
-        j_data = json.loads(s_data)
         title = j_data.get("title")
         summary = j_data.get("summary")
     except Exception as e:
-        error = "解析出错，AI 原始数据：" + s_data
+        error = "解析出错，AI 原始数据：" + j_data
         return "error", error, content_zh
 
     return title, summary, content_zh

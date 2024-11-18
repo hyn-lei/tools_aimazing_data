@@ -77,7 +77,7 @@ class DataCard(Model):
         model = DataCard.get_or_none(DataCard.title_slug == slug)
         if summarize:
             # sum_content = cls.ai.summarize(read_me_content)
-            sum_content = langchain_summarize(read_me_content, None)
+            sum_content = langchain_translate(read_me_content, None)
             # sum_content = langchain_translate(read_me_content, None)
             logging.info(f"ai working: {sum_content}")
             if sum_content:
