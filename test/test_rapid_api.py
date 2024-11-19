@@ -271,8 +271,9 @@ def langchain_translate(content: str, cb):
     策略：
     1. 根据英文内容翻译，遵守原意的前提下让内容更通俗易懂、符合中文表达习惯，但要保留原有格式不变。
     2. 保留图片信息。
+    3. 在完整理解文章内容后，可以改写文章内容，符合中文表达习惯和习惯用语。
     
-    现在请翻译以下内容为简体中文：
+    现在请翻译与改写以下内容为简体中文：
     
     """
     return langchain_instruct(system_message, content, cb)
