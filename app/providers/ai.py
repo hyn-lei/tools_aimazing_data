@@ -217,7 +217,7 @@ def ai_handle(content: str):
         title = j_data.get("title")
         summary = j_data.get("summary")
     except Exception as e:
-        error = "解析出错，AI 原始数据：" + j_data
+        error = "解析出错，AI 原始数据：" + str(j_data)
         return "error", error, content_zh
 
     return title, summary, content_zh
