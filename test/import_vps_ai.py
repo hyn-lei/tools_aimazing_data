@@ -1,11 +1,16 @@
+from typing import List
+
 import httpx
 import psycopg2
 from datetime import datetime
 
 from langchain.chains.llm import LLMChain
+from langchain.chains.question_answering.map_rerank_prompt import output_parser
 from langchain.output_parsers import StructuredOutputParser
+from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import OpenAI, ChatOpenAI
 from langchain.prompts import PromptTemplate
+from pydantic import BaseModel, Field
 
 from config.config import settings
 
@@ -36,6 +41,33 @@ async def fetch_page_data(url):
     except Exception as e:
         print(f"Error fetching page data: {e}")
         return None
+
+
+class VPSPlanModel(BaseModel):
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+    vendor: str
+    name: str
+    cpu_core: int
+    ssd: str
+    network: str
+    virtual_type: str
+    price_monthly: float
+    price_annually: float
+    native_ip: str
+    media_support: str
+    refund_days: int
+    support_region: str
+    support_city: str
+    remark: str = ''
+    memory: str
+    hidden_from_list: bool = False
+    order_url: str
+    traffic: str
+    network_optimization_type: str
+    pros: str = ''
+    discount_code: str = ''
+    pid: int
 
 
 # Step 2: 使用 OpenAI 解析 HTML 数据
@@ -115,10 +147,14 @@ def extract_data_with_langchain(html_content):
     只返回上面要求的 JSON 数据格式，**不需要任何解释**。请确保返回的数据没有其他文本或说明。
     """
 
+    out_parser = PydanticOutputParser(pydantic_object=VPSPlanModel)
     # 使用 PromptTemplate 创建 Langchain 的 Prompt
     prompt = PromptTemplate(
         input_variables=["html_content"],
-        template=prompt_template
+        template=prompt_template,
+        # partial_variables={
+        #     "format_instructions": out_parser.get_format_instructions()
+        # }
     )
 
     # 使用 Langchain 的 LLM 接口生成对话
@@ -184,6 +220,7 @@ def extract_data_with_langchain(html_content):
     # print(result.content)
 
     chain = prompt | llm.with_structured_output(json_schema)
+    # chain = prompt | llm | out_parser
     result = chain.invoke({'html_content': html_content})
     print(result)
 
