@@ -179,7 +179,6 @@ def langchain_instruct(system_message: str, content: str, cb: Callbacks = None, 
     if cb:
         llm.streaming = True
         llm.callbacks = cb
-        llm.with_structured_output()
 
     # print(output_schema)
 
