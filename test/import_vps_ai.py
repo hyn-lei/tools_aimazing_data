@@ -32,7 +32,10 @@ llm = ChatOpenAI(
 async def fetch_page_data(url):
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url)
+
+            ga = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0'
+            # cookie = 'WHMCS9YPENnfW6CSV=5f947993b9411e9089e27e2fec9c573f; _ga_6EQXLSG4QC=GS1.1.1733033145.1.0.1733033145.60.0.0; _ga=GA1.1.1002026121.1733033146; sib_cuid=a310d69f-0571-4fec-b0f9-b384b61f9dad; cf_clearance=NPf1GLf59x0_7aUvh9SS786sAKzO28aRBEIBisXg0vU-1733033145-1.2.1.1-kZ.8zi8JVp5ZLeHZhcwf2LaWm_CIUijoZcuKXDdBiOWJmb4Seod7IVH3P6F_pdhyYaBjSNiB0gqNH._hHUkxhl1sxVdAQasjYuVGq9XgYQ4B6SAR3FIB6..s9xZim492K8gunB_TESmGcMfuFgZmOht91TRcKm.mPG5V_uhhckOjqkKQK2mDJYKO_1l_ecz0__zelcNZ.iptkaWL6fh3zdLOg7TTrCt1jo6skqN1Wxj.a_Eplz9a9EIxeVB_gYYtPARalGvvia0VB_LlG_f4EN2ZtwMyPJA8KKVoecQ42RFRX4mfAi8RRgMWXc29guN6dhNl2sb9E1.KZHsHsN75qUXUnrSWXWT52L7gQDpTuJbs9IRrHoiqWG41XdB15TD3tuVN1H6rdVifz6qynL3eKQ'
+            response = await client.get(url, headers={'User-Agent': ga})
             response.raise_for_status()
             return response.text
     except httpx.HTTPStatusError as exc:
@@ -80,24 +83,29 @@ def extract_data_with_langchain(html_content):
     {html_content}
 
     返回的 JSON 数据应该包含一个数组，其中每个对象是一个字典，包含以下字段：
-    - vendor: 提供商名称，如果包含 CloudCone，填入 14；
+    - vendor: 提供商名称，如果包含 CloudCone，填入 14；如果包含 HostDare，填入 10；如果包含 Cubecloud，填入17；\
+        如果包含 saltyfish，填入16；\
+        如果保护 AlphaVPS，填入 18；
     - title: 计划名称
     - cpu: CPU 核数，单纯数字表示，单位个数
     - storage: SSD 存储大小，单纯数字表示，单位GB
     - network: 网络带宽
-    - price_monthly: 每月价格，如果没有留空，不需要做计算处理。
-    - price_annually: 每年价格，如果没有留空，不需要做计算处理。
+    - price_monthly: 每月价格，如果没有设置为None，不需要做计算处理。如果能找到每季度，则使用每季度值/3，填入此字段
+    - price_annually: 每年价格，如果没有设置为None，不需要做计算处理。
     - media_support: 支持的媒体，可选类型，Netflix,ChatGPT,Disney，如果没有留空。
     - region: 支持区域，US改成USA
     - city: 支持城市
     - memory: 内存大小，单纯数字表示，单位GB
-    - order_url: 订购链接，如果 vendor 包含 CloudCone，在链接后面按照 url 的方式，拼接上参数 &ref=12163
+    - order_url: 订购链接，如果 vendor 包含 CloudCone，在链接后面拼接参数 &ref=12163；如果 vendor 包含 HostDare，在链接后面拼接参数 &aff=3997；\
+     如果 vendor 包含 cubecloud，order url 改成 https://www.cubecloud.net/aff.php?aff=2482&pid={{产品id}}；\
+     如果 vendor 包含 saltyfish，order url 改成 https://portal.saltyfish.io/aff.php?aff=604&pid={{产品id}}；\
+     如果 vendor 包含 AlphaVPS，order url 改成 https://alphavps.com/clients/aff.php?aff=809&pid={{产品id}}；
     - bandwidth: 带宽，单纯数字表示，单位TB
     - pros: 优点描述
     - remark: 备注信息
     - pid: 产品 ID，pid或者gid后面的数值，或者从 order_url 中获取；
     - discount_code: 折扣码，如果没有留空
-    - network_optimization_type：网络优化类型，如果没有留空；
+    - network_optimization_type：网络优化类型，如果没有留空；CN2 GIA/GT表示的是电信网络优化，CU表示联通网络优化，CMI表示移动网络优化；
 
     请确保返回的 JSON 格式正确，并且每个 VPS 计划是一个字典对象。返回的 JSON 格式示例：
 
@@ -348,7 +356,7 @@ def insert_db(extracted_data):
 
             # 调用插入方法
             print(data)
-            # insert_vps_plan(data)
+            insert_vps_plan(data)
     except Exception as e:
         print(f"处理提取数据时发生错误：{e}")
 
@@ -357,7 +365,7 @@ def insert_db(extracted_data):
 async def process_vps_data(url):
     # Step 1: 获取 HTML 内容
     html_content = await fetch_page_data(url)
-
+    # html_content=''''''
     print(html_content)
     # Step 2: 使用 Langchain 与 OpenAI 解析 HTML
     if html_content:
@@ -373,7 +381,15 @@ if __name__ == "__main__":
     import asyncio
 
     # 示例 URL
-    url = "https://hello.cloudcone.com/bf-vps-sale-2024/"
-
+    # url = "https://hello.cloudcone.com/bf-vps-sale-2024/"
+    # url='https://hostdare.com/blackfriday.html'
+    # url='https://www.cubecloud.net/store/lax-lite'
+    # url='https://www.cubecloud.net/store/lax-pro'
+    # url = 'https://www.cubecloud.net/store/hk-pro'
+    # url = 'https://portal.saltyfish.io/store/sjc-elite'
+    # url='https://portal.saltyfish.io/store/sjc-premium'
+    # url='https://portal.saltyfish.io/store/sjc-standard'
+    # url='https://portal.saltyfish.io/store/ams-premium'
+    url = 'https://alphavps.com/clients/store/bf-2024'
     # 调用主函数
     asyncio.run(process_vps_data(url))
