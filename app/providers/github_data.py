@@ -24,6 +24,7 @@ def git_hub_retriever(github_url: str):
     star = summary_data.get("stargazers_count", 0)
     fork = summary_data.get("forks_count", 0)
     watch = summary_data.get("subscribers_count", 0)
+    homepage = summary_data.get("homepage")
     license_name = "未声明"
     license_ = summary_data.get("license")
     if license_:
@@ -51,6 +52,7 @@ def git_hub_retriever(github_url: str):
         star,
         fork,
         watch,
+        homepage,
         license_name,
         latest_update,
         latest_version,

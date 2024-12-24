@@ -21,6 +21,7 @@ class DataCard(Model):
     sort = IntegerField()
     title = CharField()
     summary = CharField()
+    homepage = CharField()
     featured_image = CharField()
     details = CharField()
     tags = JSONField()
@@ -54,6 +55,7 @@ class DataCard(Model):
             star,
             fork,
             watch,
+            homepage,
             license_,
             latest_update,
             latest_version,
@@ -66,6 +68,7 @@ class DataCard(Model):
             "stars": star,
             "forks": fork,
             "watches": watch,
+            "homepage":homepage,
             "latest_update": latest_update,
             "latest_version": latest_version,
         }
