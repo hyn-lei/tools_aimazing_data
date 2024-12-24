@@ -25,12 +25,12 @@ def pull_data():
         if not data:
             continue
 
-        name, full_name, avatar, summary, read_me_content, tags, star, fork, watch, homepage,\
+        name, full_name, avatar, author_name, summary, read_me_content, tags, star, fork, watch, homepage, \
             license_, latest_update, latest_version = data
 
         DataCard.update_or_create(url, data, False)
         logging.info(
-            f'summary data, {id_}, {url}, {avatar}, {star}, {fork}, {watch}, {homepage}, {license_},{latest_update},'
+            f'summary data, {id_}, {url}, {avatar},{author_name}, {star}, {fork}, {watch}, {homepage}, {license_},{latest_update},'
             f' {latest_version}')
 
         # update db
