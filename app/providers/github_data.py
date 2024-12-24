@@ -30,6 +30,7 @@ def git_hub_retriever(github_url: str):
     if license_:
         license_name = license_.get("name")
     avatar = summary_data.get("owner").get("avatar_url")
+    author_name = summary_data.get("owner").get("login")
     summary = summary_data.get("description", "")
     tags = summary_data.get("topics", [])
 
@@ -46,6 +47,7 @@ def git_hub_retriever(github_url: str):
         name,
         full_name,
         avatar,
+        author_name,
         summary,
         read_me_content,
         tags,

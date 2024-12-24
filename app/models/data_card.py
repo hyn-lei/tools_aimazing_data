@@ -28,6 +28,7 @@ class DataCard(Model):
     url = CharField()
     title_slug = CharField()
     author_avatar = CharField()
+    author_name = CharField()
     license = CharField()
     stars = IntegerField()
     forks = IntegerField()
@@ -49,6 +50,7 @@ class DataCard(Model):
             name,
             full_name,
             avatar,
+            author_name,
             summary,
             read_me_content,
             tags,
@@ -65,10 +67,11 @@ class DataCard(Model):
             "tags": tags,
             "license": license_,
             "author_avatar": avatar,
+            "author_name": author_name,
             "stars": star,
             "forks": fork,
             "watches": watch,
-            "homepage":homepage,
+            "homepage": homepage,
             "latest_update": latest_update,
             "latest_version": latest_version,
         }
