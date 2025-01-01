@@ -1,7 +1,9 @@
 import os
+import sys
 import base64
 import logging
-from playwright.async_api import async_playwright
+import asyncio
+from pyppeteer import launch
 from app.services.file_service import FileService
 
 class ScreenshotService:
@@ -11,7 +13,7 @@ class ScreenshotService:
         
     async def take_screenshot(self, url: str) -> str:
         """
-        对网站进行截图并上传到服务器
+        使用pyppeteer对网站进行截图并上传到服务器
         
         Args:
             url: 要截图的网站URL
@@ -26,13 +28,90 @@ class ScreenshotService:
             os.makedirs(temp_dir, exist_ok=True)
             screenshot_path = os.path.join(temp_dir, "screenshot.png")
             
-            # 使用 playwright 进行截图
-            async with async_playwright() as p:
-                browser = await p.chromium.launch()
-                page = await browser.new_page()
-                await page.goto(url)
-                await page.wait_for_load_state('networkidle')
-                await page.screenshot(path=screenshot_path, full_page=True)
+            # 设置环境变量来指定Chromium的下载镜像
+            os.environ['PYPPETEER_DOWNLOAD_HOST'] = 'http://npm.taobao.org/mirrors'
+            
+            # 启动浏览器，使用系统安装的Chrome
+            browser_args = [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process'
+            ]
+            
+            if sys.platform == 'win32':
+                # Windows下尝试使用本地Chrome
+                chrome_paths = [
+                    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+                    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+                    os.path.expanduser('~\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe'),
+                ]
+                
+                chrome_exe = None
+                for path in chrome_paths:
+                    if os.path.exists(path):
+                        chrome_exe = path
+                        break
+                
+                if chrome_exe:
+                    browser = await launch(
+                        executablePath=chrome_exe,
+                        args=browser_args,
+                        headless=True,
+                        handleSIGINT=False,
+                        handleSIGTERM=False,
+                        handleSIGHUP=False
+                    )
+                else:
+                    # 如果找不到本地Chrome，使用下载的版本
+                    browser = await launch(
+                        args=browser_args,
+                        headless=True,
+                        handleSIGINT=False,
+                        handleSIGTERM=False,
+                        handleSIGHUP=False
+                    )
+            else:
+                # Linux下使用默认配置
+                browser = await launch(
+                    args=browser_args,
+                    headless=True,
+                    handleSIGINT=False,
+                    handleSIGTERM=False,
+                    handleSIGHUP=False
+                )
+            
+            try:
+                # 创建新页面
+                page = await browser.newPage()
+                
+                # 设置视口大小
+                await page.setViewport({'width': 1920, 'height': 1080})
+                
+                # 访问URL
+                await page.goto(url, {
+                    'waitUntil': 'networkidle0',
+                    'timeout': 30000
+                })
+                
+                # 等待页面加载完成
+                await page.waitFor(2000)  # 额外等待2秒确保动态内容加载
+                
+                # 获取页面高度并设置视口
+                page_height = await page.evaluate('() => document.documentElement.scrollHeight')
+                await page.setViewport({'width': 1920, 'height': page_height})
+                
+                # 截取全页面截图
+                await page.screenshot({
+                    'path': screenshot_path,
+                    'fullPage': True
+                })
+                
+            finally:
+                # 确保浏览器关闭
                 await browser.close()
             
             # 将截图文件转换为base64
@@ -55,3 +134,15 @@ class ScreenshotService:
         except Exception as e:
             logging.error(f"Error taking screenshot: {str(e)}")
             return ""
+
+if __name__ == "__main__":
+    # 使用新的事件循环
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    
+    async def main():
+        screenshot_service = ScreenshotService()
+        result = await screenshot_service.take_screenshot("https://www.baidu.com")
+        print(f"Screenshot URL: {result}")
+    
+    asyncio.run(main())

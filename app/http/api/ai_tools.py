@@ -63,10 +63,7 @@ async def analyze_url(request: Request):
 
         # 3. 获取截图
         screenshot_service = ScreenshotService()
-        if not sys.platform.startswith('win'):
-            screenshot_path = await screenshot_service.take_screenshot(url)
-        else:
-            screenshot_path = ''
+        screenshot_path = await screenshot_service.take_screenshot(url)
 
         # 4. 保存数据到数据库
         try:

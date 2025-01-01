@@ -30,5 +30,5 @@ retry
 
 aiohttp
 beautifulsoup4
-playwright
+pypeteer
 tiktoken
