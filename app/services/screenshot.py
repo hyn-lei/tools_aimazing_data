@@ -102,13 +102,11 @@ class ScreenshotService:
                 await page.waitFor(2000)  # 额外等待2秒确保动态内容加载
                 
                 # 获取页面高度并设置视口
-                page_height = await page.evaluate('() => document.documentElement.scrollHeight')
-                await page.setViewport({'width': 1920, 'height': page_height})
+                await page.setViewport({'width': 1200, 'height': 675})
                 
                 # 截取全页面截图
                 await page.screenshot({
-                    'path': screenshot_path,
-                    'fullPage': True
+                    'path': screenshot_path
                 })
                 
             finally:
