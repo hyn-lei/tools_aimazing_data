@@ -3,6 +3,7 @@ import json
 import logging
 import asyncio
 import sys
+import os
 from typing import Optional
 from uuid import UUID
 
@@ -52,10 +53,62 @@ class FileService:
     def __init__(self):
         self.base_url = 'https://directus.aimazing.site'
         
-    async def upload_file_from_url(self, url: str) -> Optional[UUID]:
+    async def upload_file(self, file_path: str, content_type: str = None) -> Optional[UUID]:
+        """
+        上传本地文件到Directus服务器
         
-        if not url:
+        Args:
+            file_path: 本地文件路径
+            content_type: 文件类型，如 'image/png'
+            
+        Returns:
+            UUID: 上传成功返回文件ID，失败返回None
+        """
+        try:
+            if not os.path.exists(file_path):
+                logging.error(f"File not found: {file_path}")
+                return None
+                
+            # 如果没有指定content_type，尝试猜测
+            if not content_type:
+                if file_path.lower().endswith('.png'):
+                    content_type = 'image/png'
+                elif file_path.lower().endswith('.jpg') or file_path.lower().endswith('.jpeg'):
+                    content_type = 'image/jpeg'
+                else:
+                    content_type = 'application/octet-stream'
+            
+            # 准备文件数据
+            data = aiohttp.FormData()
+            data.add_field('file',
+                          open(file_path, 'rb'),
+                          filename=os.path.basename(file_path),
+                          content_type=content_type)
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{self.base_url}/files",
+                    data=data
+                ) as response:
+                    if response.status != 200:
+                        logging.error(f"Failed to upload file. Status: {response.status}")
+                        return None
+                        
+                    result = await response.json()
+                    
+                    if not result or 'data' not in result or 'id' not in result['data']:
+                        logging.error("Invalid response format")
+                        return None
+                        
+                    file_id = result['data']['id']
+                    logging.info(f"File uploaded successfully. ID: {file_id}")
+                    return UUID(file_id)
+                    
+        except Exception as e:
+            logging.error(f"Error uploading file: {str(e)}")
             return None
+            
+    async def upload_file_from_url(self, url: str) -> Optional[UUID]:
         """
         从URL上传文件到Directus服务器
         
@@ -66,7 +119,10 @@ class FileService:
             UUID: 上传成功返回文件ID，失败返回None
         """
         try:
-            payload = {
+            if not url:
+                return None
+                
+            payload = { 
                 "url": url
             }
             
@@ -102,8 +158,11 @@ class FileService:
 if __name__ == "__main__":
     async def main():
         file_service = FileService()
+        result = await file_service.upload_file("./test.png")
+        print(f"Local file upload result: {result}")
+        
         result = await file_service.upload_file_from_url("https://pics6.baidu.com/feed/58ee3d6d55fbb2fb2162aa9ea65104ab4723dc98.jpeg@f_auto?token=9e91174778e579607d534fd43a008025")
-        print(result)
+        print(f"URL upload result: {result}")
 
     # 在Windows上需要使用这个事件循环策略
     if sys.platform == 'win32':

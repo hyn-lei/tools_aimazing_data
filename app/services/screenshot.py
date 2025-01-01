@@ -28,7 +28,6 @@ class ScreenshotService:
             os.makedirs(temp_dir, exist_ok=True)
             screenshot_path = os.path.join(temp_dir, "screenshot.png")
             logging.info(f"Screenshot path: {screenshot_path}")
-            print(f"Screenshot path: {screenshot_path}")
             
             # 设置环境变量来指定Chromium的下载镜像
             os.environ['PYPPETEER_DOWNLOAD_HOST'] = 'http://npm.taobao.org/mirrors'
@@ -116,15 +115,8 @@ class ScreenshotService:
                 # 确保浏览器关闭
                 await browser.close()
             
-            # 将截图文件转换为base64
-            with open(screenshot_path, "rb") as image_file:
-                base64_image = base64.b64encode(image_file.read()).decode()
-            
-            # 构造data URI
-            data_uri = f"data:image/png;base64,{base64_image}"
-            
             # 上传到服务器
-            file_id = await self.file_service.upload_file_from_url(data_uri)
+            file_id = await self.file_service.upload_file(screenshot_path, 'image/png')
             
             # 删除临时文件
             os.remove(screenshot_path)
