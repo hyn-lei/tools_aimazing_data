@@ -50,7 +50,7 @@ class AIAnalyzer:
                    - slug: title slugify
                    - summary: 100字以内的简短介绍
                    - logo: 网站Logo的URL，优先选择高分辨率图片，使用 ICON 信息作为备选
-                   - region: 工具所属地区，如 CN、US、UK 等
+                   - region: 工具所属地区，如 cn\us\uk\au 等，全小写国家与地区代码
                    - free_plan: 是否有免费计划
                    - details: 详细介绍工具的功能、特点和使用场景，500-1000字
 
