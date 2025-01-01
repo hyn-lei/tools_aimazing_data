@@ -43,7 +43,7 @@ class WebCrawler:
                 '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar',
                 'login', 'signin', 'signup', 'register', 'auth',
                 'cart', 'checkout', 'account',
-                'privacy', 'terms', 'contact',
+                'terms', 'contact',
                 'post', 'blog', 'affiliate'
             ]
             path_lower = parsed.path.lower()
