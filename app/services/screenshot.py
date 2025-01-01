@@ -28,6 +28,7 @@ class ScreenshotService:
             os.makedirs(temp_dir, exist_ok=True)
             screenshot_path = os.path.join(temp_dir, "screenshot.png")
             logging.info(f"Screenshot path: {screenshot_path}")
+            print(f"Screenshot path: {screenshot_path}")
             
             # 设置环境变量来指定Chromium的下载镜像
             os.environ['PYPPETEER_DOWNLOAD_HOST'] = 'http://npm.taobao.org/mirrors'
