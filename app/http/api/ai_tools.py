@@ -83,7 +83,7 @@ async def analyze_url(request: Request):
                     title=analysis_result['title'],
                     slug=analysis_result['slug'],
                     summary=analysis_result['summary'],
-                    details=analysis_result['details'] + f"\n![{analysis_result['title']}]({screenshot_path})",
+                    details=f"![{analysis_result['title']}]({screenshot_path})\n\n" + analysis_result['details'] ,
                     logo=logo_id,  # 使用上传后的文件ID
                     region=analysis_result['region'],
                     free_plan=analysis_result['free_plan']
