@@ -30,7 +30,8 @@ async def reset_db_state():
 db = PostgresqlDatabase(
     settings.DATABASE,
     user=settings.USER,
-    host=settings.HOST,
+    #host=settings.HOST,
+    host='192.210.248.10',
     password=settings.PASSWORD,
     port=settings.PORT,
     options="-c search_path=aimazing",

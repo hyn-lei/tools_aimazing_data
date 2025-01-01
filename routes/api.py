@@ -8,6 +8,7 @@ from app.http.api import (
     aigc_percentages,
     blog,
     mediums,
+    ai_tools,
 )
 from app.http.api import auth
 from app.http.api import users
@@ -34,3 +35,5 @@ api_router.include_router(translations.router, tags=["translations"])
 api_router.include_router(mediums.router, tags=["mediums"])
 
 api_router.include_router(aigc_percentages.router, tags=["aigc_pts"])
+
+api_router.include_router(ai_tools.router, tags=["ai_tools"])

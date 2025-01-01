@@ -241,7 +241,7 @@ def insert_vps_plan(data):
     try:
         # 连接到数据库，设置 search_path
         connection = psycopg2.connect(
-            host="198.12.92.78",
+            host="192.210.248.10",
             database="main_site",
             user="aimazing",
             password="aimazing_R!",

@@ -27,3 +27,8 @@ langchain-openai
 langchain_community
 
 retry
+
+aiohttp
+beautifulsoup4
+playwright
+tiktoken
