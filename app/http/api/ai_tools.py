@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.requests import Request
 
-from app.database import db_new
+from app.database import db_connection
 from app.services.web_crawler import WebCrawler
 from app.services.ai_analyzer import AIAnalyzer
 from app.services.screenshot import ScreenshotService
@@ -79,47 +79,53 @@ async def analyze_url(request: Request):
                 if not logo_id:
                     logging.warning(f"Failed to upload logo from URL: {analysis_result['logo']}")
 
-            db_new.connect(reuse_if_open=True)
-            with db_new.atomic():
-                # 创建AI工具记录
-                tool = AITool.create(
-                    url=url,
-                    title=analysis_result['title'],
-                    slug=analysis_result['slug'],
-                    summary=analysis_result['summary'],
-                    details=f"![{analysis_result['title']}]({screenshot_path})\n\n" + analysis_result['details'] ,
-                    logo=logo_id,  # 使用上传后的文件ID
-                    region=analysis_result['region'],
-                    free_plan=analysis_result['free_plan']
-                )
-
-                # 保存定价方案
-                for index, plan in enumerate(analysis_result['pricing_plans']):
-                    PricingPlan.create(
-                        tool=tool,
-                        sort=index,
-                        name=plan['name'],
-                        service=plan['service'],
-                        price_currency=plan['price_currency'],
-                        price_month=plan['price_month'],
-                        price_year=plan['price_year'],
-                        price_lifetime=plan['price_lifetime'],
-                        recommended=plan['recommended']
+            with db_connection():
+                # 使用事务保存所有相关数据
+                with db_new.atomic():
+                    # 创建AI工具记录
+                    # 确保summary不超过255字符
+                    summary = analysis_result['summary']
+                    if len(summary) > 255:
+                        summary = summary[:252] + '...'
+                        
+                    tool = AITool.create(
+                        url=url,
+                        title=analysis_result['title'],
+                        slug=analysis_result['slug'],
+                        summary=summary,
+                        details=f"![{analysis_result['title']}]({screenshot_path})\n\n" + analysis_result['details'],
+                        logo=logo_id,
+                        region=analysis_result['region'],
+                        free_plan=analysis_result['free_plan']
                     )
 
-                # 保存分类关联
-                for category_id in analysis_result['category_ids']:
-                    AIToolCategory.create(
-                        ai_tools=tool,
-                        data_categories_id=category_id
-                    )
+                    # 保存定价方案
+                    for index, plan in enumerate(analysis_result['pricing_plans']):
+                        PricingPlan.create(
+                            tool=tool,
+                            sort=index,
+                            name=plan['name'],
+                            service=plan['service'],
+                            price_currency=plan['price_currency'],
+                            price_month=plan['price_month'],
+                            price_year=plan['price_year'],
+                            price_lifetime=plan['price_lifetime'],
+                            recommended=plan['recommended']
+                        )
 
-                # 保存标签关联
-                for tag_id in analysis_result['tag_ids']:
-                    AIToolTag.create(
-                        ai_tools=tool,
-                        ai_tags_id=tag_id
-                    )
+                    # 保存分类关联
+                    for category_id in analysis_result['category_ids']:
+                        AIToolCategory.create(
+                            ai_tools=tool,
+                            data_categories_id=category_id
+                        )
+
+                    # 保存标签关联
+                    for tag_id in analysis_result['tag_ids']:
+                        AIToolTag.create(
+                            ai_tools=tool,
+                            ai_tags_id=tag_id
+                        )
         finally:
             if not db_new.is_closed():
                 db_new.close()

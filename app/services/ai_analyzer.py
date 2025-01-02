@@ -23,6 +23,8 @@ class AIAnalyzer:
     async def analyze(self, site_data: dict) -> dict:
         """分析网站内容，提取所有需要的信息"""
         try:
+            if not self.categories or not self.tags:
+                raise ValueError("Categories or tags not loaded")
             # 合并所有内容
             content = self._merge_site_content(site_data)
             if not content:
@@ -42,7 +44,7 @@ class AIAnalyzer:
             # 一次性分析所有内容
             prompt = ChatPromptTemplate.from_messages([
                 ("system", """
-                你是一个专业的内容分析AI助手。请分析网站内容，提取以下所有信息。
+                你是一个专业的内容分析AI助手。请分析网站内容，提取以下所有信息。使用中文输出，不要使用英文。
                 注意：如果内容中没有明确提到的信息，请不要随意猜测或填充。
 
                 1. 基本信息：
@@ -114,7 +116,7 @@ class AIAnalyzer:
             return parsed
 
         except Exception as e:
-            logging.error(f"Error in analyze: {str(e)}", exc_info=True)
+            logging.error(f"Error in analyze: {str(e)}")
             return {}
 
     def _merge_site_content(self, site_data: dict) -> str:
@@ -139,7 +141,7 @@ class AIAnalyzer:
                         merged_content.append(f"URL: {url}\n{content}")
                         logging.debug(f"Extracted content from {url}: {len(content)} chars")
                 except Exception as e:
-                    logging.error(f"Error processing URL {url}: {str(e)}", exc_info=True)
+                    logging.error(f"Error processing URL {url}: {str(e)}")
                     continue
             
             if not merged_content:
@@ -151,7 +153,7 @@ class AIAnalyzer:
             return result
             
         except Exception as e:
-            logging.error(f"Error in _merge_site_content: {str(e)}", exc_info=True)
+            logging.error(f"Error in _merge_site_content: {str(e)}")
             raise
 
     def _extract_content_from_html(self, html: str) -> str:
@@ -183,7 +185,7 @@ class AIAnalyzer:
             return main_content
             
         except Exception as e:
-            logging.error(f"Error extracting content from HTML: {str(e)}", exc_info=True)
+            logging.error(f"Error extracting content from HTML: {str(e)}")
             return ""
 
     def _parse_result(self, result) -> dict:
@@ -220,7 +222,7 @@ class AIAnalyzer:
                     return {}
                 
         except Exception as e:
-            logging.error(f"Error parsing result: {str(e)}", exc_info=True)
+            logging.error(f"Error parsing result: {str(e)}")
             return {}
 
     def _extract_json_from_text(self, text: str) -> str:
@@ -243,7 +245,7 @@ class AIAnalyzer:
             
             return ""
         except Exception as e:
-            logging.error(f"Error extracting JSON: {str(e)}", exc_info=True)
+            logging.error(f"Error extracting JSON: {str(e)}")
             return ""
 
     def _clean_json_string(self, json_str: str) -> str:
@@ -266,56 +268,37 @@ class AIAnalyzer:
             
             return json_str
         except Exception as e:
-            logging.error(f"Error cleaning JSON string: {str(e)}", exc_info=True)
+            logging.error(f"Error cleaning JSON string: {str(e)}")
             return json_str
 
-    def _load_categories(self) -> Dict:
-        """加载所有分类数据"""
-        categories = {}
+    def _load_categories(self) -> List[Dict]:
+        """加载所有数据类别"""
         try:
-            cursor = db.execute_sql("""
-                SELECT id, name, slug, sub_name 
-                FROM data_categories 
-                WHERE id > 0 and parent = 4;
-            """)
-            for row in cursor.fetchall():
-                categories[row[1].lower()] = {
-                    'id': row[0],
-                    'name': row[1],
-                    'slug': row[2],
-                    'sub_name': row[3]
-                }
+            from app.database import db_connection
+            with db_connection():
+                categories = []
+                for category in DataCategory.select():
+                    categories.append({
+                        'id': category.id,
+                        'name': category.name
+                    })
+                return categories
         except Exception as e:
-            logging.error(f"Error loading categories: {str(e)}", exc_info=True)
-        return categories
+            logging.error(f"Error loading categories: {str(e)}")
+            return []
 
-    def _load_tags(self) -> Dict:
-        """加载所有标签数据"""
-        tags = {}
+    def _load_tags(self) -> List[Dict]:
+        """加载所有标签"""
         try:
-            cursor = db.execute_sql("""
-                SELECT id, title, slug 
-                FROM ai_tags 
-                WHERE id > 0
-            """)
-            for row in cursor.fetchall():
-                tags[row[1].lower()] = {
-                    'id': row[0],
-                    'title': row[1],
-                    'slug': row[2]
-                }
+            from app.database import db_connection
+            with db_connection():
+                tags = []
+                for tag in AITag.select():
+                    tags.append({
+                        'id': tag.id,
+                        'name': tag.name
+                    })
+                return tags
         except Exception as e:
-            logging.error(f"Error loading tags: {str(e)}", exc_info=True)
-        return tags
-
-    def _truncate_content(self, content: str, max_tokens: int = 4000) -> str:
-        """截取内容，确保不超过token限制"""
-        # 简单估算：平均每个token 4个字符
-        char_limit = max_tokens * 4
-        if len(content) <= char_limit:
-            return content
-        
-        # 保留开头和结尾的内容
-        head_size = char_limit // 2
-        tail_size = char_limit - head_size
-        return content[:head_size] + "\n...[内容已截断]...\n" + content[-tail_size:]
+            logging.error(f"Error loading tags: {str(e)}")
+            return []
