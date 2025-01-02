@@ -1,19 +1,18 @@
-from peewee import PostgresqlDatabase
+from playhouse.pool import PooledPostgresqlDatabase
 import logging
 from contextlib import contextmanager
 
 # 数据库连接配置
-db_new = PostgresqlDatabase(
+db_new = PooledPostgresqlDatabase(
     'main_site',
+    max_connections=8,
+    stale_timeout=300,  # 5分钟超时
+    timeout=30,  # 连接超时时间
     user='postgres',
     password='postRy78XT',
     host='192.210.248.10',
     port=5432,
-    options="-c search_path=aimazing",
-    # 添加重连相关配置
-    max_connections=8,
-    stale_timeout=300,  # 5分钟超时
-    timeout=30  # 连接超时时间
+    options="-c search_path=aimazing -c statement_timeout=30000"  # 30秒查询超时
 )
 
 def get_db():
@@ -56,3 +55,11 @@ def initialize_db():
     except Exception as e:
         logging.error(f"Failed to initialize database: {str(e)}")
         raise
+
+def close_db_pool():
+    """关闭数据库连接池"""
+    try:
+        db_new.close_all()
+        logging.info("Database connection pool closed")
+    except Exception as e:
+        logging.error(f"Error closing database pool: {str(e)}")
