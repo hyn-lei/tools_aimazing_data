@@ -55,12 +55,16 @@ async def analyze_url(request: Request):
         site_data = await crawler.crawl()
 
         # print(site_data)
+        if not site_data:
+            raise HTTPException(status_code=400, detail="Failed to crawl URL")
 
         # 2. AI分析内容
         analyzer = AIAnalyzer()
         analysis_result = await analyzer.analyze(site_data)
         # print(analysis_result)
-
+        if not analysis_result:
+            raise HTTPException(status_code=400, detail="Failed to analyze content")
+            
         # 3. 获取截图
         screenshot_service = ScreenshotService()
         screenshot_path = await screenshot_service.take_screenshot(url)
