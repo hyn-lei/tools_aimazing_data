@@ -4,8 +4,9 @@ import json
 import re
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+
+from app.models.models import DataCategory, AITag
 from config.config import settings
-from app.providers.database import db
 from bs4 import BeautifulSoup
 
 class AIAnalyzer:
