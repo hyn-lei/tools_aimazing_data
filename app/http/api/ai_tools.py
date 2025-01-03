@@ -55,7 +55,7 @@ async def analyze_url(request: Request):
         # 2. AI分析内容
         analyzer = AIAnalyzer()
         analysis_result = await analyzer.analyze(site_data)
-        print(analysis_result)
+        logging.info(analysis_result)
         if not analysis_result:
             raise HTTPException(status_code=400, detail="Failed to analyze content")
             
