@@ -1,14 +1,8 @@
 import logging
-import asyncio
-from operator import index
-import sys
-from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.requests import Request
 
-from app.database import db_connection
+from app.database import db_connection, db_new
 from app.services.web_crawler import WebCrawler
 from app.services.ai_analyzer import AIAnalyzer
 from app.services.screenshot import ScreenshotService
@@ -61,7 +55,7 @@ async def analyze_url(request: Request):
         # 2. AI分析内容
         analyzer = AIAnalyzer()
         analysis_result = await analyzer.analyze(site_data)
-        # print(analysis_result)
+        print(analysis_result)
         if not analysis_result:
             raise HTTPException(status_code=400, detail="Failed to analyze content")
             

@@ -38,7 +38,7 @@ class DataCategory(BaseModel):
     id = AutoField()
     name = CharField(max_length=255, null=True)
     slug = CharField(max_length=255, default='', unique=True)
-    parent = ForeignKeyField('self', backref='children', null=True)
+    parent = IntegerField()
     page_content = TextField(null=True)
     sub_name = CharField(max_length=255, null=True)
 

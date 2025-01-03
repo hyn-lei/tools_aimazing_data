@@ -34,12 +34,12 @@ class AIAnalyzer:
             # 构建分类和标签提示
             categories_prompt = "\n".join([
                 f"{cat['id']}. {cat['name']}" + (f" ({cat['sub_name']})" if cat['sub_name'] else "")
-                for cat in self.categories.values()
+                for cat in self.categories
             ])
             
             tags_prompt = "\n".join([
-                f"{tag['id']}. {tag['title']}"
-                for tag in self.tags.values()
+                f"{tag['id']}. {tag['name']}"
+                for tag in self.tags
             ])
 
             # 一次性分析所有内容
@@ -281,7 +281,8 @@ class AIAnalyzer:
                 for category in DataCategory.select():
                     categories.append({
                         'id': category.id,
-                        'name': category.name
+                        'name': category.name,
+                        'sub_name':category.sub_name
                     })
                 return categories
         except Exception as e:
@@ -297,7 +298,7 @@ class AIAnalyzer:
                 for tag in AITag.select():
                     tags.append({
                         'id': tag.id,
-                        'name': tag.name
+                        'name': tag.title
                     })
                 return tags
         except Exception as e:
