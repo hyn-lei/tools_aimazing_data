@@ -85,7 +85,8 @@ def extract_data_with_langchain(html_content):
     返回的 JSON 数据应该包含一个数组，其中每个对象是一个字典，包含以下字段：
     - vendor: 提供商名称，如果包含 CloudCone，填入 14；如果包含 HostDare，填入 10；如果包含 Cubecloud，填入17；\
         如果包含 saltyfish，填入16；\
-        如果保护 AlphaVPS，填入 18；
+        如果包含 AlphaVPS，填入 18；\
+        如果包含 Racknerd，填入 3；\
     - title: 计划名称
     - cpu: CPU 核数，单纯数字表示，单位个数
     - storage: SSD 存储大小，单纯数字表示，单位GB
@@ -99,7 +100,8 @@ def extract_data_with_langchain(html_content):
     - order_url: 订购链接，如果 vendor 包含 CloudCone，在链接后面拼接参数 &ref=12163；如果 vendor 包含 HostDare，在链接后面拼接参数 &aff=3997；\
      如果 vendor 包含 cubecloud，order url 改成 https://www.cubecloud.net/aff.php?aff=2482&pid={{产品id}}；\
      如果 vendor 包含 saltyfish，order url 改成 https://portal.saltyfish.io/aff.php?aff=604&pid={{产品id}}；\
-     如果 vendor 包含 AlphaVPS，order url 改成 https://alphavps.com/clients/aff.php?aff=809&pid={{产品id}}；
+     如果 vendor 包含 AlphaVPS，order url 改成 https://alphavps.com/clients/aff.php?aff=809&pid={{产品id}}；\
+     如果 vendor 包含 Racknerd，order url 改成 https://my.racknerd.com/aff.php?aff=6581&pid={{产品id}}；\
     - bandwidth: 带宽，单纯数字表示，单位TB
     - pros: 优点描述
     - remark: 备注信息
@@ -331,7 +333,7 @@ def insert_db(extracted_data):
                 'created_at': now,
                 'updated_at': now,
                 'vendor': outside_data['vendor'],
-                'name': outside_data['title'],
+                'name': outside_data['title'] + ' (New Year 2025)',
                 'cpu_core': outside_data['cpu'],
                 'ssd': outside_data['storage'],
                 'network': outside_data['network'],
@@ -390,6 +392,7 @@ if __name__ == "__main__":
     # url='https://portal.saltyfish.io/store/sjc-premium'
     # url='https://portal.saltyfish.io/store/sjc-standard'
     # url='https://portal.saltyfish.io/store/ams-premium'
-    url = 'https://alphavps.com/clients/store/bf-2024'
+    # url = 'https://alphavps.com/clients/store/bf-2024'
+    url = 'https://www.racknerd.com/NewYear/'
     # 调用主函数
     asyncio.run(process_vps_data(url))
