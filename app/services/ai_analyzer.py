@@ -14,7 +14,7 @@ class AIAnalyzer:
         self.llm = ChatOpenAI(
             model="google/gemini-flash-1.5",
             temperature=0.2,
-            api_key=settings.OPENAI_KEY,
+            api_key=settings.OPENROUTER_KEY,
             base_url="https://openrouter.ai/api/v1"
         )
         # 加载分类和标签数据
