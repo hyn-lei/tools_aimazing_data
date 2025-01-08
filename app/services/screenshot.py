@@ -101,15 +101,15 @@ class ScreenshotService:
                 # 等待页面加载完成
                 await page.waitFor(2000)  # 额外等待2秒确保动态内容加载
                 
-                # 获取页面高度并设置视口
-                await page.setViewport({'width': 1200, 'height': 675})
-                
                 # 截取全页面截图
                 await page.screenshot({
                     'path': screenshot_path
                 })
                 
             finally:
+                 # 确保页面关闭
+                if page:
+                    await page.close()
                 # 确保浏览器关闭
                 await browser.close()
             
