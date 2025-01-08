@@ -99,7 +99,7 @@ class ScreenshotService:
                 })
                 
                 # 等待页面加载完成
-                await page.waitFor(2000)  # 额外等待2秒确保动态内容加载
+                # await page.waitFor(2000)  # 额外等待2秒确保动态内容加载
                 
                 # 截取全页面截图
                 await page.screenshot({
