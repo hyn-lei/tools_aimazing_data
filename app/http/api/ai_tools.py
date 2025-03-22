@@ -7,6 +7,7 @@ from app.services.web_crawler import WebCrawler
 from app.services.ai_analyzer import AIAnalyzer
 from app.services.screenshot import ScreenshotService
 from app.services.file_service import FileService
+from app.services.agent_tools import URLAnalysisAgent
 from app.models.models import AITool, PricingPlan, AIToolCategory, AIToolTag
 router = APIRouter(prefix="/ai_tools")
 
@@ -44,24 +45,20 @@ async def analyze_url(request: Request):
         if not url:
             raise HTTPException(status_code=400, detail="URL is required")
 
-        # 1. 爬取网页内容
-        crawler = WebCrawler(url)
-        site_data = await crawler.crawl()
-
-        # print(site_data)
-        if not site_data:
-            raise HTTPException(status_code=400, detail="Failed to crawl URL")
-
-        # 2. AI分析内容
-        analyzer = AIAnalyzer()
-        analysis_result = await analyzer.analyze(site_data)
-        logging.info(analysis_result)
+        # 使用AI Agent分析URL
+        agent = URLAnalysisAgent()
+        agent_result = await agent.analyze_url(url)
+        
+        # 检查是否有错误
+        if "error" in agent_result and agent_result["error"]:
+            raise HTTPException(status_code=400, detail=agent_result["error"])
+        
+        # 获取分析结果和截图路径
+        analysis_result = agent_result.get("analysis_result", {})
+        screenshot_path = agent_result.get("screenshot_path", "")
+        
         if not analysis_result:
             raise HTTPException(status_code=400, detail="Failed to analyze content")
-            
-        # 3. 获取截图
-        screenshot_service = ScreenshotService()
-        screenshot_path = await screenshot_service.take_screenshot(url)
 
         # 4. 保存数据到数据库
         try:

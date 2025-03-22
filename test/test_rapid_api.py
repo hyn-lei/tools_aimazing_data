@@ -221,7 +221,9 @@ def langchain_instruct(system_message: str, content: str, cb: Callbacks = None, 
 
 
 from langchain.prompts import PromptTemplate
-from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+# Commenting out DALL-E wrapper since the LangChain community package is not installed
+# If you need this functionality, please install langchain-community package
+# from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
 
 
 def generate_image(content: str):
@@ -236,8 +238,8 @@ def generate_image(content: str):
     query = """
     a simple, modern style image, about "a website named, digital dispatch, who providing tech information"
     """
-    image_url = DallEAPIWrapper().run(query)
-    return image_url
+    # image_url = DallEAPIWrapper().run(query)
+    return query
 
 
 def langchain_assistant(content: str, cb):

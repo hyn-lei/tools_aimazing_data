@@ -46,9 +46,11 @@ class ScreenshotService:
             if sys.platform == 'win32':
                 # Windows下尝试使用本地Chrome
                 chrome_paths = [
+                    os.path.expanduser("~\\.cache\\puppeteer\\chrome\\win64-131.0.6778.204\\chrome-win64\\chrome.exe"),
                     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
                     os.path.expanduser('~\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe'),
+
                 ]
                 
                 chrome_exe = None
@@ -84,7 +86,8 @@ class ScreenshotService:
                     handleSIGTERM=False,
                     handleSIGHUP=False
                 )
-            
+
+            page = None
             try:
                 # 创建新页面
                 page = await browser.newPage()
@@ -95,7 +98,7 @@ class ScreenshotService:
                 # 访问URL
                 await page.goto(url, {
                     'waitUntil': 'networkidle0',
-                    'timeout': 30000
+                    'timeout': 60000
                 })
                 
                 # 等待页面加载完成

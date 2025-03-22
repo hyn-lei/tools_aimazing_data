@@ -12,10 +12,13 @@ from bs4 import BeautifulSoup
 class AIAnalyzer:
     def __init__(self):
         self.llm = ChatOpenAI(
-            model="google/gemini-flash-1.5",
+            #model="google/gemini-flash-1.5",
+            model='deepseek-reasoner',
             temperature=0.2,
-            api_key=settings.OPENROUTER_KEY,
-            base_url="https://openrouter.ai/api/v1"
+            #api_key=settings.OPENROUTER_KEY,
+            api_key='sk-47cf411ee6e34ef0bc2ae77ac412194b',
+            # base_url="https://openrouter.ai/api/v1",
+            base_url="https://api.deepseek.com"
         )
         # 加载分类和标签数据
         self.categories = self._load_categories()
@@ -55,7 +58,7 @@ class AIAnalyzer:
                    - logo: 网站Logo的URL，优先选择高分辨率图片，使用 ICON 信息作为备选
                    - region: 工具所属地区，如 cn、us、uk、au 等，全小写国家与地区代码
                    - free_plan: 是否有免费计划
-                   - details: 详细介绍工具的功能、特点和使用场景，500-1000字
+                   - details: 详细介绍工具的功能、特点、使用场景，以博文形式撰写，包含以下内容：1)工具的主要功能和特色；2)适用的场景和用户群体；3)使用建议和技巧。采用生动、专业的语言，使读者能够快速理解工具价值，500-1000字
 
                 2. 定价信息：
                    - pricing_plans: 定价方案列表，每个方案包含：
@@ -278,7 +281,7 @@ class AIAnalyzer:
             from app.database import db_connection
             with db_connection():
                 categories = []
-                for category in DataCategory.select():
+                for category in DataCategory.select().where(DataCategory.parent == 4):
                     categories.append({
                         'id': category.id,
                         'name': category.name,
