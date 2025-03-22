@@ -32,3 +32,5 @@ aiohttp
 beautifulsoup4
 pyppeteer
 tiktoken
+
+langgraph
