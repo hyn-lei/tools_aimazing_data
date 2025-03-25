@@ -5,13 +5,13 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 class WebCrawler:
-    def __init__(self, start_url: str, max_depth: int = 3, max_pages: int = 100):
+    def __init__(self, start_url: str, max_depth: int = 3, max_pages: int = 60):
         """初始化爬虫
         
         Args:
             start_url: 起始URL
             max_depth: 最大爬取深度，默认3级
-            max_pages: 最大爬取页面数，默认100个
+            max_pages: 最大爬取页面数，默认60个
         """
         self.start_url = self._normalize_url(start_url)
         self.max_depth = max_depth
@@ -71,7 +71,7 @@ class WebCrawler:
             ignore_patterns = [
                 '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar',
                 'login', 'signin', 'signup', 'register', 'auth',
-                'cart', 'checkout', 'account',
+                'cart', 'checkout', 'account', 'integrations',
                 'privacy',
                 'post', 'blog', 'affiliate'
             ]
