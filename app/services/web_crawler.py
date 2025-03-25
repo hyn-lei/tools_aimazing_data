@@ -71,7 +71,7 @@ class WebCrawler:
             ignore_patterns = [
                 '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar',
                 'login', 'signin', 'signup', 'register', 'auth',
-                'cart', 'checkout', 'account', 'integrations', 'glossary',
+                'cart', 'checkout', 'account', 'integrations', 'glossary', 'lesson',
                 'privacy',
                 'post', 'blog', 'affiliate'
             ]
