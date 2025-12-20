@@ -1,7 +1,7 @@
 from contextvars import ContextVar
 
 from peewee import _ConnectionState, PostgresqlDatabase
-from playhouse.pool import PooledMySQLDatabase
+from playhouse.shortcuts import ReconnectMixin
 
 from config.database import settings
 
@@ -22,15 +22,19 @@ class PeeweeConnectionState(_ConnectionState):
         return self._state.get()[name]
 
 
+class ReconnectPostgresqlDatabase(ReconnectMixin, PostgresqlDatabase):
+    pass
+
+
 async def reset_db_state():
     db._state._state.set(db_state_default.copy())
     db._state.reset()
 
 
-db = PostgresqlDatabase(
+db = ReconnectPostgresqlDatabase(
     settings.DATABASE,
     user=settings.USER,
-    #host=settings.HOST,
+    # host=settings.HOST,
     host='192.210.248.10',
     password=settings.PASSWORD,
     port=settings.PORT,
@@ -52,7 +56,7 @@ class PeeweeConnectionState2(_ConnectionState):
         return self._state.get()[name]
 
 
-db_blog = PostgresqlDatabase(
+db_blog = ReconnectPostgresqlDatabase(
     settings.DATABASE,
     user=settings.USER,
     host=settings.HOST,
