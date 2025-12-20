@@ -1,0 +1,15 @@
+[Unit]
+Description=Aimazing Data Web App (Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/tools_aimazing_data
+# Removed -D (daemon) as systemd handles the process directly
+ExecStart=/data/tools_aimazing_data/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app -t 300
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
