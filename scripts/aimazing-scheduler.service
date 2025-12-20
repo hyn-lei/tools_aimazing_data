@@ -9,6 +9,8 @@ WorkingDirectory=/data/tools_aimazing_data
 ExecStart=/data/tools_aimazing_data/venv/bin/python /data/tools_aimazing_data/scheduler.py
 Restart=always
 RestartSec=30
+StandardOutput=append:/data/tools_aimazing_data/scheduler_service.log
+StandardError=append:/data/tools_aimazing_data/scheduler_service.error.log
 
 [Install]
 WantedBy=multi-user.target

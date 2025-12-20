@@ -10,6 +10,8 @@ WorkingDirectory=/data/tools_aimazing_data
 ExecStart=/data/tools_aimazing_data/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app -t 300
 Restart=always
 RestartSec=30
+StandardOutput=append:/data/tools_aimazing_data/web_service.log
+StandardError=append:/data/tools_aimazing_data/web_service.error.log
 
 [Install]
 WantedBy=multi-user.target
