@@ -1,4 +1,5 @@
 import logging
+import time
 
 from app.models.data_card import DataCard
 from app.providers.github_data import git_hub_retriever
@@ -14,24 +15,33 @@ def pull_data():
     """
 
     all_list = DataCard.list_all()
+    error_count = 0
     for model in all_list:
-        # print(type(model))
-        url = model['url']
-        if not url:
-            continue
+        try:
+            # print(type(model))
+            url = model['url']
+            if not url:
+                continue
 
-        id_ = model['id']
-        data = git_hub_retriever(url)
-        if not data:
-            continue
+            id_ = model['id']
+            data = git_hub_retriever(url)
+            if not data:
+                continue
 
-        name, full_name, avatar, author_name, summary, read_me_content, tags, star, fork, watch, homepage, \
-            license_, latest_update, latest_version = data
+            name, full_name, avatar, author_name, summary, read_me_content, tags, star, fork, watch, homepage, \
+                license_, latest_update, latest_version = data
 
-        DataCard.update_or_create(url, data, False)
-        logging.info(
-            f'summary data, {id_}, {url}, {avatar},{author_name}, {star}, {fork}, {watch}, {homepage}, {license_},{latest_update},'
-            f' {latest_version}')
+            DataCard.update_or_create(url, data, False)
+            logging.info(
+                f'summary data, {id_}, {url}, {avatar},{author_name}, {star}, {fork}, {watch}, {homepage}, {license_},{latest_update},'
+                f' {latest_version}')
+        except Exception as e:
+            logging.error(f"Error processing data card {model.get('id')}: {e}", exc_info=True)
+            error_count += 1
+            time.sleep(30)
+            if error_count >= 10:
+                logging.error("Error count reached 10, stopping job function.")
+                raise e
 
         # update db
         # model.author_avatar = avatar
