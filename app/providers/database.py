@@ -23,7 +23,10 @@ class PeeweeConnectionState(_ConnectionState):
 
 
 class ReconnectPostgresqlDatabase(ReconnectMixin, PostgresqlDatabase):
-    reconnect_errors = (OperationalError, InterfaceError)
+    reconnect_errors = (
+        (OperationalError, ""),
+        (InterfaceError, ""),
+    )
 
 
 async def reset_db_state():
