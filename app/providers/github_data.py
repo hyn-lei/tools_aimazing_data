@@ -1,16 +1,35 @@
 from config.config import settings
 import requests
 import logging
+import time
+
+
+# Separate connect and socket read timeouts; neither request path may wait
+# indefinitely for GitHub to send headers or finish a stalled response body.
+GITHUB_REQUEST_TIMEOUT = (10, 30)
+
+
+def _get_response(url, headers=None):
+    started = time.monotonic()
+    logging.debug("GitHub request started: %s", url)
+    try:
+        res = requests.get(url, headers=headers, timeout=GITHUB_REQUEST_TIMEOUT)
+    except requests.exceptions.RequestException:
+        logging.warning("GitHub request failed after %.2fs: %s", time.monotonic() - started, url)
+        raise
+    logging.debug("GitHub request completed in %.2fs: %s, status=%s",
+                  time.monotonic() - started, url, res.status_code)
+    return res
 
 
 def get_raw_content(url):
-    res = requests.get(url)
+    res = _get_response(url)
     if res.status_code != 200:
         return None
     return res.text
 
 
-def git_hub_retriever(github_url: str):
+def git_hub_retriever(github_url: str, include_readme: bool = True):
     repo_url = github_url.replace("https://github.com/", "")
     github = GitHubData(repo_url)
     summary_data = github.summary_data()
@@ -35,14 +54,15 @@ def git_hub_retriever(github_url: str):
     tags = summary_data.get("topics", [])
 
     activity = github.activity_data()
-    print(github)
-    latest_update = activity[0].get("timestamp")
+    latest_update = summary_data.get("pushed_at") or summary_data.get("updated_at")
+    if activity:
+        latest_update = activity[0].get("timestamp") or latest_update
     releases = github.release_data()
     latest_version = ""
     if releases:
         latest_version = releases[0].get("name")
 
-    read_me_content = github.read_me()
+    read_me_content = github.read_me() if include_readme else None
     return (
         name,
         full_name,
@@ -75,7 +95,7 @@ class GitHubData:
         self.repo_path = path
 
     def get_data(self, url):
-        res = requests.get(url, headers=self.headers)
+        res = _get_response(url, headers=self.headers)
 
         if res.status_code != 200:
             logging.warning(f"{res.status_code},{res.text}")

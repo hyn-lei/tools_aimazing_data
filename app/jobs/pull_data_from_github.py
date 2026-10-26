@@ -6,7 +6,15 @@ from app.providers.github_data import git_hub_retriever
 
 
 def pull_data_from_github():
-    pull_data()
+    started = time.monotonic()
+    logging.info("GitHub sync started")
+    try:
+        pull_data()
+    except Exception:
+        logging.exception("GitHub sync failed after %.2fs", time.monotonic() - started)
+        raise
+    else:
+        logging.info("GitHub sync completed in %.2fs", time.monotonic() - started)
 
 
 def pull_data():
@@ -15,8 +23,10 @@ def pull_data():
     """
 
     all_list = DataCard.list_all()
+    logging.info("GitHub sync loaded %s data cards", len(all_list))
     error_count = 0
-    for model in all_list:
+    for index, model in enumerate(all_list, start=1):
+        started = time.monotonic()
         try:
             # print(type(model))
             url = model['url']
@@ -24,7 +34,11 @@ def pull_data():
                 continue
 
             id_ = model['id']
-            data = git_hub_retriever(url)
+            logging.info("GitHub sync processing %s/%s: id=%s, url=%s",
+                         index, len(all_list), id_, url)
+            # Metadata refresh does not use README content. Keep README fetching
+            # for the import API, where it is translated into card details.
+            data = git_hub_retriever(url, include_readme=False)
             if not data:
                 continue
 
@@ -42,6 +56,9 @@ def pull_data():
             if error_count >= 10:
                 logging.error("Error count reached 10, stopping job function.")
                 raise e
+        finally:
+            logging.info("GitHub sync card %s/%s finished in %.2fs",
+                         index, len(all_list), time.monotonic() - started)
 
         # update db
         # model.author_avatar = avatar

@@ -128,6 +128,32 @@
 
 3. 调度器： `scheduler.py`
 
+### GitHub 定时同步排查
+
+同步任务启动后立即执行，之后每小时执行一次，同一时间只运行一个实例。如果出现
+`maximum number of running instances reached (1)`，表示上一轮仍未结束，需要检查它最后处理的仓库和请求。
+
+GitHub API 和 README 下载均设置了 10 秒连接超时、30 秒读取超时。读取超时限制的是
+socket 等待数据的时间，包含收到 HTTP 200 后响应体停滞的情况，并非整轮任务的总时限。
+单条失败后保留原有的 30 秒等待并继续处理，累计 10 次异常则结束本轮并向调度器报告失败。
+定时任务只更新仓库元数据，跳过 README；通过 API 导入新仓库时仍会获取 README。
+
+日志中的 `GitHub sync processing` 标明当前进度，`GitHub request started/completed/failed`
+标明请求是否结束，`GitHub sync completed/failed` 记录整轮耗时。
+更新代码后需要重启调度器，才能释放旧代码中已经阻塞的任务。如果使用项目提供的 systemd 服务：
+
+```bash
+sudo systemctl restart aimazing-scheduler.service
+journalctl -u aimazing-scheduler.service -n 50 --no-pager
+tail -n 100 scheduler_service.log scheduler_service.error.log
+```
+
+离线回归测试（使用本地 HTTP 服务模拟响应头或响应体停滞，不访问 GitHub 或数据库）：
+
+```bash
+python -m pytest -q tests/test_github_sync.py
+```
+
 ## 参考
 
 [FastAPI官方中文文档](https://fastapi.tiangolo.com/zh/)
